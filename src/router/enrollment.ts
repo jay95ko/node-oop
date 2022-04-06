@@ -3,7 +3,7 @@ import { EnrollmentController } from "../controller/enrollment";
 
 const router = express.Router();
 
-export default function studentRouter(
+export default function enrollmentRouter(
   enrollmentController: EnrollmentController
 ) {
   // POST /enrollment
