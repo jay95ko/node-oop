@@ -6,12 +6,15 @@ import { StudentService } from "../service/student";
 export class StudentController {
   constructor(private studentService: StudentService) {}
 
-  createStudent = (req: Request, res: Response) => {
-    const result = this.studentService.createStudent();
-    res.send({ result });
+  createStudent = async (req: Request, res: Response) => {
+    res
+      .status(201)
+      .send({ result: await this.studentService.createStudent(req.body) });
   };
 
-  deleteStudent = (req: Request, res: Response) => {
-    res.send({ result: this.studentService.deleteStudent() });
+  deleteStudent = async (req: Request, res: Response) => {
+    const { params } = req;
+
+    res.send({ result: await this.studentService.deleteStudent(+params.id) });
   };
 }
