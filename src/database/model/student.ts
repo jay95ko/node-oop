@@ -1,12 +1,8 @@
 import { Service } from "typedi";
+import { IStudent } from "../../modules/interface/student.interface";
 import Date from "../../util/date.util";
-import { getColumnForQuery } from "../../util/db.util";
+import { getAndColumnForQuery } from "../../util/db.util";
 import db from "../db";
-
-export interface IStudent {
-  email: string;
-  name: string;
-}
 
 @Service()
 export class StudentReopsitory {
@@ -23,7 +19,7 @@ export class StudentReopsitory {
   };
 
   findOne = async (params: object) => {
-    const conditions = getColumnForQuery(params);
+    const conditions = getAndColumnForQuery(params);
     const sql = `SELECT * FROM ${this.tableName} WHERE ${conditions} AND deletedAt IS NULL`;
     const connection = await db.getConnection();
     const result = await connection.query(sql);

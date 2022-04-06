@@ -7,9 +7,11 @@ export class StudentController {
   constructor(private studentService: StudentService) {}
 
   createStudent = async (req: Request, res: Response) => {
+    const { body } = req;
+
     res
       .status(201)
-      .send({ result: await this.studentService.createStudent(req.body) });
+      .send({ result: await this.studentService.createStudent(body) });
   };
 
   deleteStudent = async (req: Request, res: Response) => {
