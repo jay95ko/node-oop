@@ -1,32 +1,43 @@
 import { Request, Response } from "express";
 import { Service } from "typedi";
+import { ILectureQuery } from "../modules/interface/lecture.interface";
 import { LectureService } from "../service/lecture";
 
 @Service()
 export class LectureController {
   constructor(private lectureService: LectureService) {}
 
-  getList = (req: Request, res: Response) => {
-    const result = this.lectureService.getLectureList();
+  getList = async (req: Request, res: Response) => {
+    const { query } = req;
+    console.log(query);
+    const result = await this.lectureService.getLectureList(query);
+
     res.send({ result });
   };
 
-  getOne = (req: Request, res: Response) => {
-    const result = this.lectureService.getLecture();
-    res.send({ result });
+  getOne = async (req: Request, res: Response) => {
+    const { params } = req;
+
+    res.send({ result: await this.lectureService.getLecture(+params.id) });
   };
 
-  create = (req: Request, res: Response) => {
-    const result = this.lectureService.createLecture();
-    res.send({ result });
+  create = async (req: Request, res: Response) => {
+    const { body } = req;
+
+    res.send({ result: await this.lectureService.createLecture(body) });
   };
 
-  update = (req: Request, res: Response) => {
-    const result = this.lectureService.updateLecture();
-    res.send({ result });
+  update = async (req: Request, res: Response) => {
+    const { params, body } = req;
+
+    res.send({
+      result: await this.lectureService.updateLecture(+params.id, body),
+    });
   };
 
-  delete = (req: Request, res: Response) => {
-    res.send({ result: this.lectureService.deleteLecture(); });
+  delete = async (req: Request, res: Response) => {
+    const { params } = req;
+
+    res.send({ result: await this.lectureService.deleteLecture(+params.id) });
   };
 }

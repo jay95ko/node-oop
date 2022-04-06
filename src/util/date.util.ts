@@ -6,8 +6,10 @@ export default class Date {
   constructor() {}
 
   getTime = () => {
-    const now = dayjs().format("YYYY.MM.DD HH:mm:ss");
+    return dayjs().format("YYYY.MM.DD HH:mm:ss");
+  };
 
-    return now;
+  formatDate = (date: string) => {
+    return dayjs(date).format("YYYY.MM.DD HH:mm:ss");
   };
 }

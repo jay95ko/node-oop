@@ -20,3 +20,71 @@ export const validateCreateStudent = async (
   }
   next();
 };
+
+export const validateCreateLecture = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const body: object = req.body;
+  const lectureSchema = Joi.object().keys({
+    title: Joi.string().min(1).max(45).required(),
+    description: Joi.string().min(1).required(),
+    price: Joi.number().integer().positive().required(),
+    teacherId: Joi.number().integer().positive().required(),
+    categoryId: Joi.number().integer().positive().required(),
+  });
+
+  const schemaArray = Joi.array().items(lectureSchema).max(10);
+
+  try {
+    await schemaArray.validateAsync(body);
+  } catch (err) {
+    throw new ValidateError("Validate error occer");
+  }
+  next();
+};
+
+export const validateUpdateLecture = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const body: object = req.body;
+  const lectureSchema = Joi.object().keys({
+    title: Joi.string().min(1).max(45).required(),
+    description: Joi.string().min(1).required(),
+    price: Joi.number().integer().positive().required(),
+    expose: Joi.number().integer().positive().required().max(1),
+  });
+
+  try {
+    await lectureSchema.validateAsync(body);
+  } catch (err) {
+    throw new ValidateError("Validate error occer");
+  }
+  next();
+};
+
+export const validateGetLectureList = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const query: object = req.query;
+  const lectureSchema = Joi.object().keys({
+    page: Joi.number().integer().positive().optional(),
+    order: Joi.string().optional().valid("new", "student"),
+    category: Joi.number().integer().positive().optional(),
+    title: Joi.string().optional(),
+    teacherName: Joi.string().optional(),
+    student: Joi.number().integer().positive().optional(),
+  });
+
+  try {
+    await lectureSchema.validateAsync(query);
+  } catch (err) {
+    throw new ValidateError("Validate error occer");
+  }
+  next();
+};
