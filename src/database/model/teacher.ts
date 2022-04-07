@@ -10,7 +10,7 @@ export class TeacherReopsitory {
 
   findListById = async (params: Array<number>) => {
     const conditions = getOrColumnForQuery("id", params);
-    const sql = `SELECT * FROM ${this.tableName} WHERE ${conditions} AND deletedAt IS NULL`;
+    const sql = `SELECT * FROM ${this.tableName} WHERE (${conditions}) AND deletedAt IS NULL`;
     const connection = await db.getConnection();
     const result = await connection.query(sql);
     db.releaseConnection(connection);
