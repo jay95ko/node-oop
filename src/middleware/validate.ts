@@ -88,3 +88,22 @@ export const validateGetLectureList = async (
   }
   next();
 };
+
+export const validateCreateEnrollment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const body: object = req.body;
+  const enrollmentSchema = Joi.object().keys({
+    studentId: Joi.number().integer().positive().required(),
+    lectureIds: Joi.array().items(Joi.number().integer().positive()).required(),
+  });
+
+  try {
+    await enrollmentSchema.validateAsync(body);
+  } catch (err) {
+    throw new ValidateError("Validate error occer");
+  }
+  next();
+};
