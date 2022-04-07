@@ -7,6 +7,7 @@ import {
 import Date from "../../util/date.util";
 import {
   getAndColumnForQuery,
+  getOrColumnForQuery,
   getOrColumnForUpdateQuery,
 } from "../../util/db.util";
 import db from "../db";
@@ -17,7 +18,7 @@ export class LectureReopsitory {
     this.tableName = "lecture";
   }
 
-  find = async (params: object) => {
+  find = async (params: object = {}) => {
     const conditions = getAndColumnForQuery(params);
     const sql = `SELECT lecture.id, lecture.title, lecture.description, category.category as category, lecture.price, lecture.studentNum, lecture.createdAt, lecture.updatedAt, student.id as student_id, student.name as student_name, enrollment.createdAt as enrollmentAt
     FROM lecture 
@@ -31,6 +32,15 @@ export class LectureReopsitory {
     db.releaseConnection(connection);
 
     return result;
+  };
+
+  findListById = async (params: Array<number>) => {
+    const conditions = getOrColumnForQuery("id", params);
+    const sql = `SELECT * FROM ${this.tableName} WHERE (${conditions}) AND expose = 1 AND deletedAt IS NULL`;
+    const connection = await db.getConnection();
+    const result = await connection.query(sql);
+    db.releaseConnection(connection);
+    return result[0];
   };
 
   create = async (lectures: Array<ILecture>) => {
