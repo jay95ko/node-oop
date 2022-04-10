@@ -5,14 +5,16 @@ import { LectureReopsitory } from "../database/model/lecture";
 import { TeacherReopsitory } from "../database/model/teacher";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import ConflictError from "../modules/errors/conflit.error";
-import DBError from "../modules/errors/db.error";
 import {
   ILecture,
   ILectureDetail,
   ILectureQuery,
+  ILectureSqlParams,
   ILectureUpdate,
 } from "../modules/interface/lecture.interface";
 import Date from "../util/date.util";
+import db from "../database/db";
+import DBError from "../modules/errors/db.error";
 
 @Service()
 export class LectureService {
@@ -24,20 +26,65 @@ export class LectureService {
     private date: Date
   ) {}
 
-  getLectureList = async (query: ILectureQuery) => {
-    // console.log(page, order, category, title, teacherName, student);
-    // console.log(query);
-    const lectures = await this.lectureRepository.find({ query });
-    return "강의 리스트";
+  getLectureList = async (reqQuery: ILectureQuery) => {
+    let order = "";
+    if (!reqQuery.order) {
+      order = "lecture.id";
+    } else {
+      order = "lecture.studentNum";
+    }
+
+    let sql: ILectureSqlParams = {
+      order,
+      include: [
+        {
+          model: "category",
+          require: true,
+          on: "lecture.categoryId = category.id",
+        },
+        {
+          model: "teacher",
+          require: true,
+          on: "lecture.teacherId = teacher.id",
+        },
+      ],
+      limit: reqQuery.limit,
+    };
+
+    if (reqQuery.title) {
+      sql.where = [{ "lecture.title": `'${reqQuery.title}'` }];
+    } else if (reqQuery.teacherName) {
+      sql.where = [{ "teacher.name": `'${reqQuery.teacherName}'` }];
+    } else if (reqQuery.student) {
+      sql.where = [{ "enrollment.studentId": reqQuery.student }];
+      sql.include?.push({
+        model: "enrollment",
+        require: false,
+        on: "enrollment.lectureId = lecture.id",
+      });
+    }
+
+    if (reqQuery.category) {
+      if (!sql.where) {
+        sql.where = [{ "lecture.categoryId": reqQuery.category }];
+      } else {
+        sql.where.push({ "lecture.categoryId": reqQuery.category });
+      }
+    }
+
+    const lectures = await this.lectureRepository.find(sql);
+    return lectures;
   };
 
   getLecture = async (id: number) => {
-    let lectures = await this.lectureRepository.findOne({ id });
+    let lecture = await this.lectureRepository.findOne({ id });
+    if (lecture.length < 1) return lecture;
+
     const students: Array<any> = [];
 
-    lectures = lectures.map((lecture: ILectureDetail) => {
+    lecture = lecture.map((lecturecols: ILectureDetail) => {
       const { student_id, student_name, enrollmentAt, ...otherLecture } =
-        lecture;
+        lecturecols;
       if (student_id) {
         students.push({
           id: student_id,
@@ -45,10 +92,9 @@ export class LectureService {
           enrollmentAt: this.date.formatDate(enrollmentAt),
         });
       }
-
       return otherLecture;
     });
-    const result = lectures[0];
+    const result = lecture[0];
     result.students = students;
 
     return result;
@@ -75,16 +121,32 @@ export class LectureService {
       categoryIds.length !== category.length ||
       teacherIds.length !== teacher.length
     ) {
-      throw new DBError("Can not ref not exist value");
+      throw new DoesNotExistError("Can not ref not exist value");
     }
 
-    const result = await this.lectureRepository.create(lectures);
-
-    return `Sucess create ${result.length} of lecture`;
+    const connection = await db.getConnection();
+    try {
+      await connection.beginTransaction();
+      const result = await this.lectureRepository.create(lectures, connection);
+      await connection.commit();
+      return `Sucess create ${result.length} of lecture`;
+    } catch (err) {
+      console.error(err);
+      await connection.rollback();
+      throw new DBError("Lecture create error");
+    } finally {
+      db.releaseConnection(connection);
+    }
   };
 
   updateLecture = async (id: number, lecture: ILectureUpdate) => {
-    const affectedRows = await this.lectureRepository.update(id, lecture);
+    const connection = await db.getConnection();
+    const affectedRows = await this.lectureRepository.update(
+      id,
+      lecture,
+      connection
+    );
+    db.releaseConnection(connection);
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist lecture for update");
     }
@@ -100,7 +162,9 @@ export class LectureService {
       );
     }
 
-    const affectedRows = await this.lectureRepository.delete(id);
+    const connection = await db.getConnection();
+    const affectedRows = await this.lectureRepository.delete(id, connection);
+    db.releaseConnection(connection);
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist lecture by id for delete");
     }

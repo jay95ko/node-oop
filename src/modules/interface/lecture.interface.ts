@@ -28,10 +28,18 @@ export interface ILectureUpdate {
 }
 
 export interface ILectureQuery {
-  page?: number;
+  limit?: number;
   order?: string;
   category?: number;
   title?: string;
   teacherName?: string;
   student?: number;
+}
+
+export interface ILectureSqlParams {
+  where?: Array<Object>;
+  order: string;
+  category?: number | string;
+  limit?: number | string;
+  include: Array<Object>;
 }

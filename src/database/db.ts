@@ -3,15 +3,15 @@ import config from "../config";
 import DBError from "../modules/errors/db.error";
 
 class DBClass {
-  private db: any;
+  public pool: any;
   constructor() {
     console.log("connect db");
-    this.db = mysql2.createPool(config.db);
+    this.pool = mysql2.createPool(config.db);
   }
 
   getConnection = async () => {
     try {
-      const connection = await this.db.getConnection();
+      const connection = await this.pool.getConnection();
       return connection;
     } catch (err) {
       throw new DBError("Can not get connection");
