@@ -9,7 +9,7 @@ export class LectureController {
 
   getList = async (req: Request, res: Response) => {
     const { query } = req;
-    console.log(query);
+
     const result = await this.lectureService.getLectureList(query);
 
     res.send({ result });

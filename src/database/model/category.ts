@@ -11,9 +11,8 @@ export class CategoryReopsitory {
   findListById = async (params: Array<number>) => {
     const conditions = getOrColumnForQuery("id", params);
     const sql = `SELECT * FROM ${this.tableName} WHERE ${conditions}`;
-    const connection = await db.getConnection();
-    const result = await connection.query(sql);
-    db.releaseConnection(connection);
+    console.log(`Query : ${sql}`);
+    const result = await db.pool.query(sql);
     return result[0];
   };
 }

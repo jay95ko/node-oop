@@ -73,8 +73,8 @@ export const validateGetLectureList = async (
 ) => {
   const query: object = req.query;
   const lectureSchema = Joi.object().keys({
-    page: Joi.number().integer().positive().optional(),
-    order: Joi.string().optional().valid("new", "student"),
+    limit: Joi.number().integer().positive().optional(),
+    order: Joi.string().optional().valid("student"),
     category: Joi.number().integer().positive().optional(),
     title: Joi.string().optional(),
     teacherName: Joi.string().optional(),

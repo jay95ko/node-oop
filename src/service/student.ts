@@ -1,4 +1,5 @@
 import { Service } from "typedi";
+import db from "../database/db";
 import { StudentReopsitory } from "../database/model/student";
 import AlreadyExistError from "../modules/errors/alreadyExist.error";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
@@ -17,12 +18,16 @@ export class StudentService {
     if (existStudent) {
       throw new AlreadyExistError("Already exist student by email");
     }
-    await this.studentRepository.create(student);
+    const connection = await db.getConnection();
+    await this.studentRepository.create(student, connection);
+    db.releaseConnection(connection);
     return "Sucess create student";
   };
 
   deleteStudent = async (id: number) => {
-    const affectedRows = await this.studentRepository.delete(id);
+    const connection = await db.getConnection();
+    const affectedRows = await this.studentRepository.delete(id, connection);
+    db.releaseConnection(connection);
     // affectedRows가 0인 경우에는 삭제 할 Row가 없다는 뜻
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist student by id for delete");
