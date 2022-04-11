@@ -213,29 +213,22 @@ export class StubLectureRepository extends LectureReopsitory {
   }
 
   find = async (params: any) => {
-    console.log(params.where);
     if (params.order === "lecture.studentNum") {
       return this.lectureListResultStudentNumOrder;
-    }
-    if (!params.where) {
+    } else if (!params.where) {
       return this.lectureListResult;
-    }
-    if (
+    } else if (
       params.where[0]?.title === "테스트9" &&
       params.where[1]?.categoryId === 2
     ) {
       return this.lectureListFilterCategoryIdResult;
-    }
-    if (params.where[0]?.title === "테스트10") {
+    } else if (params.where[0]?.title === "테스트10") {
       return this.lectureListFiltertitleResult;
-    }
-    if (params.where[0]?.categoryId === 2) {
+    } else if (params.where[0]?.categoryId === 2) {
       return this.lectureListFilterCategoryIdResult;
-    }
-    if (params.where[0]?.teacherName === "고준영") {
+    } else if (params.where[0]?.teacherName === "고준영") {
       return this.lectureListFilterTeacherResult;
-    }
-    if (params.where[0]?.studentId === 1) {
+    } else if (params.where[0]?.studentId === 1) {
       return [];
     }
   };

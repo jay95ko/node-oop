@@ -3,18 +3,28 @@ import Date from "../../../util/date.util";
 import { IEnrollmentInfo } from "../../interface/enrollment.interface";
 
 export class StubEnrollmentRepository extends EnrollmentReopsitory {
-  private existEnrollment = {
-    id: 1,
-    studentId: 1,
-    lectureId: 1,
-  };
+  private existEnrollment = [
+    {
+      id: 1,
+      studentId: 1,
+      lectureId: 1,
+    },
+  ];
   constructor(date: Date, tableName: string) {
     super(date, tableName);
   }
 
-  findById = async (id: number) => {
-    if (id === this.existEnrollment.id) {
-      return [this.existEnrollment];
+  findById = async (params: object) => {
+    const key = Object.keys(params)[0];
+    const value = Object.values(params)[0];
+    if (key === "lectureId") {
+      if (value === this.existEnrollment[0].lectureId) {
+        return this.existEnrollment;
+      }
+    } else if (key === "studentId") {
+      if (value === this.existEnrollment[0].studentId) {
+        return this.existEnrollment;
+      }
     }
     return [];
   };

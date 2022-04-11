@@ -4,8 +4,12 @@ import { EnrollmentReopsitory } from "../database/repository/elrollment";
 import { LectureReopsitory } from "../database/repository/lecture";
 import { StudentReopsitory } from "../database/repository/student";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
+import ConflictError from "../modules/errors/conflit.error";
 import DBError from "../modules/errors/db.error";
-import { IEnrollment } from "../modules/interface/enrollment.interface";
+import {
+  IEnrollment,
+  IEnrollmentInfo,
+} from "../modules/interface/enrollment.interface";
 import Date from "../util/date.util";
 
 @Service()
@@ -27,6 +31,16 @@ export class EnrollmentService {
     if (!student) {
       throw new DoesNotExistError("Can not enroll not exist student");
     }
+
+    const enrollmentedLectures = await this.enrollmentRepository.findById({
+      studentId: enrollments.studentId,
+    });
+
+    enrollmentedLectures.forEach((enrollment: IEnrollmentInfo) => {
+      if (lectureIds.includes(enrollment.lectureId)) {
+        throw new ConflictError("Can not enroll already enrolled lecture");
+      }
+    });
 
     const lectures = await this.lectureRepository.findListById(lectureIds);
     if (lectureIds.length !== lectures.length) {
