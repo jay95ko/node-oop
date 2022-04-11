@@ -12,25 +12,29 @@ export class LectureController {
 
     const result = await this.lectureService.getLectureList(query);
 
-    res.send({ result });
+    res.status(200).send({ result });
   };
 
   getOne = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res.send({ result: await this.lectureService.getLecture(+params.id) });
+    res
+      .status(200)
+      .send({ result: await this.lectureService.getLecture(+params.id) });
   };
 
   create = async (req: Request, res: Response) => {
     const { body } = req;
 
-    res.send({ result: await this.lectureService.createLecture(body) });
+    res
+      .status(201)
+      .send({ result: await this.lectureService.createLecture(body) });
   };
 
   update = async (req: Request, res: Response) => {
     const { params, body } = req;
 
-    res.send({
+    res.status(200).send({
       result: await this.lectureService.updateLecture(+params.id, body),
     });
   };
@@ -38,6 +42,8 @@ export class LectureController {
   delete = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res.send({ result: await this.lectureService.deleteLecture(+params.id) });
+    res
+      .status(204)
+      .send({ result: await this.lectureService.deleteLecture(+params.id) });
   };
 }

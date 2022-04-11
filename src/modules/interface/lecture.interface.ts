@@ -6,7 +6,7 @@ export interface ILecture {
   categoryId: number;
 }
 
-export interface ILectureDetail {
+export interface ILectureColDetail {
   id: number;
   title: string;
   description: string;
@@ -42,4 +42,26 @@ export interface ILectureSqlParams {
   category?: number | string;
   limit?: number | string;
   include: Array<Object>;
+}
+export interface ILectureList {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  studentNum: number;
+  createdAt: string;
+  teacher: string;
+}
+
+export interface ILectureDetail {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  studentNum: number;
+  createdAt: string;
+  updatedAt: string;
+  students: Array<null | { id: number; name: string; enrollmentAt: string }>;
 }
