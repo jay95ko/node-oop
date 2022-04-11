@@ -17,6 +17,8 @@ export class StudentController {
   deleteStudent = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res.send({ result: await this.studentService.deleteStudent(+params.id) });
+    res
+      .status(204)
+      .send({ result: await this.studentService.deleteStudent(+params.id) });
   };
 }

@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import db from "../database/db";
-import { StudentReopsitory } from "../database/model/student";
+import { StudentReopsitory } from "../database/repository/student";
 import AlreadyExistError from "../modules/errors/alreadyExist.error";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import { IStudent } from "../modules/interface/student.interface";
