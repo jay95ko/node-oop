@@ -4,8 +4,9 @@
   "description": "inflab-ts",
   "main": "server.js",
   "scripts": {
-    "test": "jest --setupFiles dotenv/config --forceExit --detectOpenHandles",
-    "test-coverage": "jest --setupFiles dotenv/config --forceExit --detectOpenHandles --coverage",
+    "test": "DOTENV_CONFIG_PATH=./.env.test jest --setupFiles dotenv/config --forceExit --detectOpenHandles --testPathIgnorePatterns=/tests/integration-tests",
+    "test-coverage": "DOTENV_CONFIG_PATH=./.env.test jest --setupFiles dotenv/config --forceExit --detectOpenHandles --coverage --testPathIgnorePatterns=/tests/integration-tests",
+    "test-integration": "DOTENV_CONFIG_PATH=./.env.test jest --setupFiles dotenv/config --forceExit --detectOpenHandles  --testPathPattern=/tests/integration-tests",
     "start": "nodemon --exec ts-node src/server.ts"
   },
   "repository": {
@@ -25,10 +26,12 @@
     "@types/jest": "^27.4.1",
     "@types/morgan": "^1.9.3",
     "@types/node": "^17.0.23",
+    "@types/supertest": "^2.0.12",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1",
     "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.15",
+    "supertest": "^6.2.2",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0"
   },
