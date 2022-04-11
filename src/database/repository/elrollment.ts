@@ -1,3 +1,4 @@
+import { object } from "joi";
 import { Service } from "typedi";
 import Date from "../../util/date.util";
 import db from "../db";
@@ -8,8 +9,11 @@ export class EnrollmentReopsitory {
     this.tableName = "enrollment";
   }
 
-  findById = async (params: number) => {
-    const sql = `SELECT * FROM ${this.tableName} WHERE lectureId = ${params}`;
+  findById = async (params: object) => {
+    const key = Object.keys(params)[0];
+    const value = Object.values(params)[0];
+
+    const sql = `SELECT * FROM ${this.tableName} WHERE ${key} = ${value}`;
     console.log(`Query : ${sql}`);
     const result = await db.pool.query(sql);
     return result[0];

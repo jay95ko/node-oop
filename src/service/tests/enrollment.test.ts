@@ -7,6 +7,7 @@ import { StubStudentRepository } from "../../modules/stub/repository/stub.studen
 import { StubLectureRepository } from "../../modules/stub/repository/stub.lecture.repository";
 import DoesNotExistError from "../../modules/errors/alreadyExist.error copy";
 import DBError from "../../modules/errors/db.error";
+import ConflictError from "../../modules/errors/conflit.error";
 
 describe("StudentService", () => {
   let enrollmentService: EnrollmentService;
@@ -32,15 +33,15 @@ describe("StudentService", () => {
       it('존재하는 강의들을 수강신청 시 "Sucess create ${과목수} of enrollment"반환 ', async () => {
         const newEnrollment = {
           studentId: 1,
-          lectureIds: [1, 2],
+          lectureIds: [2],
         };
 
         const result = await enrollmentService.createEnrollment(newEnrollment);
 
-        expect(result).toEqual("Sucess create 2 of enrollment");
+        expect(result).toEqual("Sucess create 1 of enrollment");
       });
 
-      it("존재하는 강의들을 수강신청 시 DB에러 발생 발생의 경우 DBError 반환 ", async () => {
+      it("이미 수강하고 있는 강의를 수강신청 시 ConflictError 발생", async () => {
         const newEnrollment = {
           studentId: 1,
           lectureIds: [1, 2, 3],
@@ -48,7 +49,9 @@ describe("StudentService", () => {
 
         await expect(async () => {
           await enrollmentService.createEnrollment(newEnrollment);
-        }).rejects.toThrowError(new DBError("Enrollment create error"));
+        }).rejects.toThrowError(
+          new ConflictError("Can not enroll already enrolled lecture")
+        );
       });
 
       it("존재하지 않는 강의를 수강신청 시 DoesNotError 발생", async () => {
@@ -62,6 +65,17 @@ describe("StudentService", () => {
         }).rejects.toThrowError(
           new DoesNotExistError("Can not enroll not exist lecture")
         );
+      });
+
+      it("존재하는 강의들을 수강신청 시 DB에러 발생 발생의 경우 DBError 반환 ", async () => {
+        const newEnrollment = {
+          studentId: 1,
+          lectureIds: [2, 3],
+        };
+
+        await expect(async () => {
+          await enrollmentService.createEnrollment(newEnrollment);
+        }).rejects.toThrowError(new DBError("Enrollment create error"));
       });
     });
   });

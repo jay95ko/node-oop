@@ -161,7 +161,9 @@ export class LectureService {
   };
 
   deleteLecture = async (id: number) => {
-    const enrollments = await this.enrollmentRepository.findById(id);
+    const enrollments = await this.enrollmentRepository.findById({
+      lectureId: id,
+    });
 
     if (enrollments.length > 0) {
       throw new ConflictError(
