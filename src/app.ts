@@ -40,7 +40,9 @@ class App {
     });
     this.app.use(
       (error: any, req: Request, res: Response, next: NextFunction) => {
-        res.status(500).send({ errorMessage: error.message, ...error });
+        res
+          .status(error.status)
+          .send({ errorMessage: error.message, ...error });
       }
     );
   }
