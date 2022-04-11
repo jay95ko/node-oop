@@ -43,9 +43,11 @@ export class LectureReopsitory {
         } else if (Object.keys(where)[0] === "studentId") {
           key = "enrollment.studentId";
         }
-        let value = typeof(Object.values(where)[0]) === "string" ? `"${Object.values(where)[0]}"` : Object.values(where)[0]
-        WHERE = 
-          `${key} = ${value} AND ` + WHERE;
+        let value =
+          typeof Object.values(where)[0] === "string"
+            ? `"${Object.values(where)[0]}"`
+            : Object.values(where)[0];
+        WHERE = `${key} = ${value} AND ` + WHERE;
       }
     });
     let WHERE_LIMIT = "";
