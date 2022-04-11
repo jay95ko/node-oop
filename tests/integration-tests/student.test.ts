@@ -1,6 +1,5 @@
 import request from "supertest";
 import { app } from "../../src/app";
-// import "../../src/database/db";
 import db from "../../src/database/db";
 
 beforeAll(async () => {
@@ -84,5 +83,8 @@ describe("/student", () => {
 });
 
 afterAll(async () => {
+  await db.pool.query("set FOREIGN_KEY_CHECKS = 0");
+  await db.pool.query("TRUNCATE TABLE student");
+  await db.pool.query("set FOREIGN_KEY_CHECKS = 1");
   await db.pool.end();
 });
