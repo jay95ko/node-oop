@@ -9,6 +9,6 @@ export class EnrollmentController {
   create = async (req: Request, res: Response) => {
     const { body } = req;
     const result = await this.enrollmentService.createEnrollment(body);
-    res.send({ result });
+    res.status(201).send({ result });
   };
 }

@@ -1,8 +1,8 @@
 import { Service } from "typedi";
 import db from "../database/db";
-import { EnrollmentReopsitory } from "../database/model/elrollment";
-import { LectureReopsitory } from "../database/model/lecture";
-import { StudentReopsitory } from "../database/model/student";
+import { EnrollmentReopsitory } from "../database/repository/elrollment";
+import { LectureReopsitory } from "../database/repository/lecture";
+import { StudentReopsitory } from "../database/repository/student";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import DBError from "../modules/errors/db.error";
 import { IEnrollment } from "../modules/interface/enrollment.interface";

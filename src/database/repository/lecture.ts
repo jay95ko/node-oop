@@ -6,7 +6,6 @@ import {
 } from "../../modules/interface/lecture.interface";
 import Date from "../../util/date.util";
 import {
-  getAndColumnForQuery,
   getOrColumnForQuery,
   getOrColumnForUpdateQuery,
 } from "../../util/db.util";
@@ -19,7 +18,6 @@ export class LectureReopsitory {
   }
 
   find = async (params: any) => {
-    console.log(params);
     let JOIN = "";
     params.include.forEach(
       (include: { model: string; require: boolean; on: string }) => {
@@ -34,11 +32,20 @@ export class LectureReopsitory {
     let WHERE = "expose = 1 AND lecture.deletedAt IS NULL";
     let WHERE_CATEGORY = "";
     params.where?.forEach((where: Array<Object | null>) => {
-      if (Object.keys(where)[0] === "lecture.categoryId") {
+      if (Object.keys(where)[0] === "categoryId") {
         WHERE_CATEGORY = `AND lecture.categoryId = ${Object.values(where)[0]}`;
       } else {
-        WHERE =
-          `${Object.keys(where)[0]} = ${Object.values(where)[0]} AND ` + WHERE;
+        let key;
+        if (Object.keys(where)[0] === "title") {
+          key = "lecture.title";
+        } else if (Object.keys(where)[0] === "teacherName") {
+          key = "teacher.name";
+        } else if (Object.keys(where)[0] === "studentId") {
+          key = "enrollment.studentId";
+        }
+        let value = typeof(Object.values(where)[0]) === "string" ? `"${Object.values(where)[0]}"` : Object.values(where)[0]
+        WHERE = 
+          `${key} = ${value} AND ` + WHERE;
       }
     });
     let WHERE_LIMIT = "";
@@ -97,15 +104,14 @@ export class LectureReopsitory {
     return result;
   };
 
-  findOne = async (params: object) => {
-    const conditions = getAndColumnForQuery(params);
+  findOne = async (id: number) => {
     const sql = `SELECT lecture.id, lecture.title, lecture.description, category.category as category, lecture.price, lecture.studentNum, lecture.createdAt, lecture.updatedAt, student.id as student_id, student.name as student_name, enrollment.createdAt as enrollmentAt
     FROM ${this.tableName}
       INNER JOIN category ON lecture.categoryId = category.id 
       INNER JOIN teacher ON lecture.teacherId = teacher.id 
       LEFT JOIN enrollment ON enrollment.lectureId = lecture.id 
       LEFT JOIN student ON enrollment.studentId = student.id AND student.deletedAt IS NULL 
-    WHERE lecture.${conditions} AND lecture.deletedAt IS NULL`;
+    WHERE lecture.id = ${id} AND lecture.deletedAt IS NULL`;
     console.log(`Query : ${sql}`);
     const result = (await db.pool.query(sql))[0];
 
@@ -124,8 +130,8 @@ export class LectureReopsitory {
     return affectedRows;
   };
 
-  delete = async (params: number, connection: any) => {
-    const sql = `DELETE FROM ${this.tableName} WHERE id = ${params}`;
+  delete = async (id: number, connection: any) => {
+    const sql = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
     console.log(`Query : ${sql}`);
     const result = await connection.query(sql);
     const affectedRows = result[0] ? result[0].affectedRows : 0;

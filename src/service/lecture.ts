@@ -1,13 +1,11 @@
 import { Service } from "typedi";
-import { CategoryReopsitory } from "../database/model/category";
-import { EnrollmentReopsitory } from "../database/model/elrollment";
-import { LectureReopsitory } from "../database/model/lecture";
-import { TeacherReopsitory } from "../database/model/teacher";
+
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import ConflictError from "../modules/errors/conflit.error";
 import {
   ILecture,
-  ILectureDetail,
+  ILectureColDetail,
+  ILectureList,
   ILectureQuery,
   ILectureSqlParams,
   ILectureUpdate,
@@ -15,6 +13,10 @@ import {
 import Date from "../util/date.util";
 import db from "../database/db";
 import DBError from "../modules/errors/db.error";
+import { LectureReopsitory } from "../database/repository/lecture";
+import { CategoryReopsitory } from "../database/repository/category";
+import { TeacherReopsitory } from "../database/repository/teacher";
+import { EnrollmentReopsitory } from "../database/repository/elrollment";
 
 @Service()
 export class LectureService {
@@ -26,7 +28,9 @@ export class LectureService {
     private date: Date
   ) {}
 
-  getLectureList = async (reqQuery: ILectureQuery) => {
+  getLectureList = async (
+    reqQuery: ILectureQuery
+  ): Promise<Array<ILectureList>> => {
     let order = "";
     if (!reqQuery.order) {
       order = "lecture.id";
@@ -52,12 +56,12 @@ export class LectureService {
     };
 
     if (reqQuery.title) {
-      sql.where = [{ "lecture.title": `'${reqQuery.title}'` }];
+      sql.where = [{ title: `${reqQuery.title}` }];
     } else if (reqQuery.teacherName) {
-      sql.where = [{ "teacher.name": `'${reqQuery.teacherName}'` }];
+      sql.where = [{ teacherName: `${reqQuery.teacherName}` }];
     } else if (reqQuery.student) {
-      sql.where = [{ "enrollment.studentId": reqQuery.student }];
-      sql.include?.push({
+      sql.where = [{ studentId: reqQuery.student }];
+      sql.include.push({
         model: "enrollment",
         require: false,
         on: "enrollment.lectureId = lecture.id",
@@ -66,9 +70,9 @@ export class LectureService {
 
     if (reqQuery.category) {
       if (!sql.where) {
-        sql.where = [{ "lecture.categoryId": reqQuery.category }];
+        sql.where = [{ categoryId: reqQuery.category }];
       } else {
-        sql.where.push({ "lecture.categoryId": reqQuery.category });
+        sql.where.push({ categoryId: reqQuery.category });
       }
     }
 
@@ -77,12 +81,14 @@ export class LectureService {
   };
 
   getLecture = async (id: number) => {
-    let lecture = await this.lectureRepository.findOne({ id });
-    if (lecture.length < 1) return lecture;
+    let lecture = await this.lectureRepository.findOne(id);
+    if (lecture.length < 1) {
+      throw new DoesNotExistError("Does not exist lecture");
+    }
 
     const students: Array<any> = [];
 
-    lecture = lecture.map((lecturecols: ILectureDetail) => {
+    lecture = lecture.map((lecturecols: ILectureColDetail) => {
       const { student_id, student_name, enrollmentAt, ...otherLecture } =
         lecturecols;
       if (student_id) {
@@ -128,6 +134,7 @@ export class LectureService {
     try {
       await connection.beginTransaction();
       const result = await this.lectureRepository.create(lectures, connection);
+
       await connection.commit();
       return `Sucess create ${result.length} of lecture`;
     } catch (err) {
