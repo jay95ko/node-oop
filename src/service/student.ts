@@ -15,6 +15,7 @@ export class StudentService {
       email: student.email,
     });
 
+    //유저 email 중복시 AlreadyExistError 반환
     if (existStudent) {
       throw new AlreadyExistError("Already exist student by email");
     }
@@ -28,7 +29,8 @@ export class StudentService {
     const connection = await db.getConnection();
     const affectedRows = await this.studentRepository.delete(id, connection);
     db.releaseConnection(connection);
-    // affectedRows가 0인 경우에는 삭제 할 Row가 없다는 뜻
+    
+    // affectedRows가 0인 경우에는 삭제 할 Row가 없다는 뜻으로 DoesNotExistError 반환
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist student by id for delete");
     }

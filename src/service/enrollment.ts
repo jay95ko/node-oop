@@ -25,6 +25,7 @@ export class EnrollmentService {
     //같은 강의 수강신청 불가하기 위해 중복값 제거
     const lectureIds: Array<number> = [...new Set(enrollments.lectureIds)];
 
+    //수강신청 하는 학생의 id가 유효값인지 확인 및 해당 id로 학생 없으면 DoesNotExistError 에러 반환
     const student = await this.studentRepository.findOne({
       id: enrollments.studentId,
     });
@@ -32,17 +33,18 @@ export class EnrollmentService {
       throw new DoesNotExistError("Can not enroll not exist student");
     }
 
+    //수강신청 하는 학생이 기존에 수강신청한 과목을 수강하려 하는 경우 ConflictError 반환
     const enrollmentedLectures = await this.enrollmentRepository.findById({
       studentId: enrollments.studentId,
     });
-
     enrollmentedLectures.forEach((enrollment: IEnrollmentInfo) => {
       if (lectureIds.includes(enrollment.lectureId)) {
         throw new ConflictError("Can not enroll already enrolled lecture");
       }
     });
 
-    const lectures = await this.lectureRepository.findListById(lectureIds);
+    //수강신청 하는 강의 목록을 조회하고 조회한 결과값과 수강신청 하는 강의의 목록의 개수가 다르면 수강신청 하려고 하는 강의가 존재하지 않는 경우이므로 DoesNotExistError 반환
+    const lectures = await this.lectureRepository.findByIds(lectureIds);
     if (lectureIds.length !== lectures.length) {
       throw new DoesNotExistError("Can not enroll not exist lecture");
     }
@@ -56,6 +58,8 @@ export class EnrollmentService {
           lectureId,
           connection
         ))
+
+        //수강신청을 하면 수강 테이블에 추가 및 강의 테이블에 studentNum 값을 증가 동작 수행이 안되었을 시 DBError에러 반환
         const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection)
         if (affectRow === 0) throw new DBError("Enrollment create error");
       }

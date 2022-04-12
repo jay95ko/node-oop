@@ -31,6 +31,7 @@ export class LectureService {
   getLectureList = async (
     reqQuery: ILectureQuery
   ): Promise<Array<ILectureList>> => {
+    //sql 쿼리 가공작업
     let order = "";
     if (!reqQuery.order) {
       order = "lecture.id";
@@ -81,6 +82,7 @@ export class LectureService {
   };
 
   getLecture = async (id: number) => {
+    //강의 id로 조회 정보 없으면 DoesNotExistError
     let lecture = await this.lectureRepository.findOne(id);
     if (lecture.length < 1) {
       throw new DoesNotExistError("Does not exist lecture");
@@ -88,9 +90,9 @@ export class LectureService {
 
     const students: Array<any> = [];
 
+    //수강하는 학생들의 정보를 배열에 담기 위해 조회한 lecture 데이터 순회
     lecture = lecture.map((lecturecols: ILectureColDetail) => {
-      const { student_id, student_name, enrollmentAt, ...otherLecture } =
-        lecturecols;
+      const { student_id, student_name, enrollmentAt, ...otherLecture } = lecturecols;
       if (student_id) {
         students.push({
           id: student_id,
@@ -119,10 +121,10 @@ export class LectureService {
     categoryIds = [...new Set(categoryIds)];
     teacherIds = [...new Set(teacherIds)];
 
-    const category = await this.categoryRepository.findListById(categoryIds);
-    const teacher = await this.teacherRepository.findListById(teacherIds);
+    const category = await this.categoryRepository.findByIds(categoryIds);
+    const teacher = await this.teacherRepository.findByIds(teacherIds);
 
-    //검색하는 고유 id 갯수와 id로 검색한 테이블의 결과값이 다르다면 없는 id로 검색한 경우
+    //검색하는 고유 id 갯수와 id로 검색한 테이블의 결과값이 다르다면 없는 id로 검색한 경우 DoesNotExistError 반환
     if (
       categoryIds.length !== category.length ||
       teacherIds.length !== teacher.length
@@ -154,12 +156,15 @@ export class LectureService {
       connection
     );
     db.releaseConnection(connection);
+
+    //affectedRows 체크 update된 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist lecture for update");
     }
     return "Sucess update lecture";
   };
 
+  //수강 테이블에 강의 id로 조회 값이 있는 경우 수강생이 있는 경우로 삭제 불가 ConflictError 반환
   deleteLecture = async (id: number) => {
     const enrollments = await this.enrollmentRepository.findById({
       lectureId: id,
@@ -174,6 +179,8 @@ export class LectureService {
     const connection = await db.getConnection();
     const affectedRows = await this.lectureRepository.delete(id, connection);
     db.releaseConnection(connection);
+
+    //affectedRows 체크 delete 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist lecture by id for delete");
     }

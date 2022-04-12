@@ -6,6 +6,7 @@ import { StudentService } from "../service/student";
 export class StudentController {
   constructor(private studentService: StudentService) {}
 
+  //수강생 회원가입
   createStudent = async (req: Request, res: Response) => {
     const { body } = req;
 
@@ -14,6 +15,7 @@ export class StudentController {
       .send({ result: await this.studentService.createStudent(body) });
   };
 
+  //수강생 탈퇴
   deleteStudent = async (req: Request, res: Response) => {
     const { params } = req;
 

@@ -15,7 +15,7 @@ export class StubCategoryRepository extends CategoryReopsitory {
     super(tableName);
   }
 
-  findListById = async (params: Array<number>) => {
+  findByIds = async (params: Array<number>) => {
     let result: any = [];
     this.existCategory.forEach((category) => {
       if (params.includes(category.id) && !result.includes(category)) {

@@ -68,7 +68,7 @@ export class LectureReopsitory {
     return result;
   };
 
-  findListById = async (params: Array<number>) => {
+  findByIds = async (params: Array<number>) => {
     const conditions = getOrColumnForQuery("id", params);
     const sql = `SELECT * FROM ${this.tableName} WHERE (${conditions}) AND expose = 1 AND deletedAt IS NULL`;
     console.log(`Query : ${sql}`);

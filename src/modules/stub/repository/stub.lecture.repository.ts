@@ -246,7 +246,7 @@ export class StubLectureRepository extends LectureReopsitory {
     }
   };
 
-  findListById = async (ids: Array<number>) => {
+  findByIds = async (ids: Array<number>) => {
     return this.lectureListByIdResult.filter((lecture) =>
       ids.includes(lecture.id)
     );

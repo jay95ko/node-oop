@@ -7,6 +7,7 @@ import { LectureService } from "../service/lecture";
 export class LectureController {
   constructor(private lectureService: LectureService) {}
 
+  //강의 목록
   getList = async (req: Request, res: Response) => {
     const { query } = req;
 
@@ -15,6 +16,7 @@ export class LectureController {
     res.status(200).send({ result });
   };
 
+  //강의 상세 정보
   getOne = async (req: Request, res: Response) => {
     const { params } = req;
 
@@ -23,6 +25,7 @@ export class LectureController {
       .send({ result: await this.lectureService.getLecture(+params.id) });
   };
 
+  //강의 생성
   create = async (req: Request, res: Response) => {
     const { body } = req;
 
@@ -31,6 +34,7 @@ export class LectureController {
       .send({ result: await this.lectureService.createLecture(body) });
   };
 
+  //강의 수정
   update = async (req: Request, res: Response) => {
     const { params, body } = req;
 
@@ -39,6 +43,7 @@ export class LectureController {
     });
   };
 
+  //강의 삭제
   delete = async (req: Request, res: Response) => {
     const { params } = req;
 
