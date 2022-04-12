@@ -20,7 +20,12 @@ export const getOrColumnForUpdateQuery = (object: object) => {
   const entries: Array<any> = Object.entries(object);
 
   const conditions: string = entries
-    .map(([key, value]) => `${key} = '${value}'`)
+    .map(([key, value]) => {
+      if (key === "studentNum") {
+        return `${key} = ${value}`;
+      }
+      return `${key} = '${value}'`;
+    })
     .join(", ");
 
   return conditions;

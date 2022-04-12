@@ -54,7 +54,7 @@ export class LectureReopsitory {
     let WHERE_LIMIT = "";
     if (params.limit) WHERE_LIMIT = `AND ${params.order} < ${params.limit}`;
 
-    const ORDER_BY = `${params.order} DESC`;
+    const ORDER_BY = `${params.order} ASC`;
 
     const sql = `SELECT lecture.id, lecture.title, lecture.description, category.category as category, lecture.price, lecture.studentNum, lecture.createdAt, teacher.name as teacher
     FROM ${this.tableName}
@@ -121,7 +121,11 @@ export class LectureReopsitory {
     return result;
   };
 
-  update = async (id: number, lecture: ILectureUpdate | ILectureAddCount, connection: any) => {
+  update = async (
+    id: number,
+    lecture: ILectureUpdate | ILectureAddCount,
+    connection: any
+  ) => {
     const contitions = getOrColumnForUpdateQuery(lecture);
     const sql = `UPDATE ${
       this.tableName
