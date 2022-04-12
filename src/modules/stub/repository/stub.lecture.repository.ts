@@ -1,6 +1,6 @@
 import { LectureReopsitory } from "../../../database/repository/lecture";
 import Date from "../../../util/date.util";
-import { ILecture, ILectureUpdate } from "../../interface/lecture.interface";
+import { ILecture, ILectureAddCount, ILectureUpdate } from "../../interface/lecture.interface";
 
 export class StubLectureRepository extends LectureReopsitory {
   private lectureListByIdResult = [
@@ -35,6 +35,19 @@ export class StubLectureRepository extends LectureReopsitory {
       title: "테스트3 강좌명",
       description: "테스트3 강좌 설명입니다.",
       price: 30000,
+      studentNum: 0,
+      expose: 1,
+      createdAt: "2022-04-06T07:43:32.000Z",
+      updatedAt: "2022-04-06T07:43:32.000Z",
+      deletedAt: null,
+      categoryId: 1,
+      teacherId: 1,
+    },
+    {
+      id: 4,
+      title: "테스트4 강좌명",
+      description: "테스트4 강좌 설명입니다.",
+      price: 40000,
       studentNum: 0,
       expose: 1,
       createdAt: "2022-04-06T07:43:32.000Z",
@@ -249,7 +262,8 @@ export class StubLectureRepository extends LectureReopsitory {
     return [];
   };
 
-  update = async (id: number, lecture: ILectureUpdate, connection: any) => {
+  update = async (id: number, lecture: ILectureUpdate | ILectureAddCount, connection: any) => {
+    if (id === 4) return 0; // 수강신청시 강의에 수강생 수 추가중 에러발생 로직 검사를 위해 발생
     let result = 0;
     this.lectureListByIdResult.forEach((lecture) => {
       if (lecture.id === id) result = 1;

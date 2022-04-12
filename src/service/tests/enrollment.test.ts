@@ -77,6 +77,17 @@ describe("StudentService", () => {
           await enrollmentService.createEnrollment(newEnrollment);
         }).rejects.toThrowError(new DBError("Enrollment create error"));
       });
+
+      it("수강신청중 lecture의 studentNum update시 DB에러 발생 발생의 경우 DBError 반환 ", async () => {
+        const newEnrollment = {
+          studentId: 1,
+          lectureIds: [4],
+        };
+
+        await expect(async () => {
+          await enrollmentService.createEnrollment(newEnrollment);
+        }).rejects.toThrowError(new DBError("Enrollment create error"));
+      });
     });
   });
 

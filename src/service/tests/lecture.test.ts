@@ -12,7 +12,6 @@ import {
 } from "../../modules/interface/lecture.interface";
 import DoesNotExistError from "../../modules/errors/alreadyExist.error copy";
 import DBError from "../../modules/errors/db.error";
-import exp from "constants";
 import ConflictError from "../../modules/errors/conflit.error";
 
 describe("LectureService", () => {
@@ -365,7 +364,7 @@ describe("LectureService", () => {
         price: 10000,
         expose: 1,
       };
-      const id = 4;
+      const id = 5;
 
       await expect(async () => {
         await lectureService.updateLecture(id, lecture);
@@ -403,7 +402,7 @@ describe("LectureService", () => {
     });
 
     it("존재하지 않는 강의를 삭제하는 경우 DoesNotError 발생", async () => {
-      const id = 4;
+      const id = 5;
 
       await expect(async () => {
         await lectureService.deleteLecture(id);

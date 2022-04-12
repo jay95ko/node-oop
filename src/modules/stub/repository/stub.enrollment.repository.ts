@@ -10,6 +10,7 @@ export class StubEnrollmentRepository extends EnrollmentReopsitory {
       lectureId: 1,
     },
   ];
+  private id = 1;
   constructor(date: Date, tableName: string) {
     super(date, tableName);
   }
@@ -31,23 +32,18 @@ export class StubEnrollmentRepository extends EnrollmentReopsitory {
 
   create = async (
     studentId: number,
-    lectureIds: Array<number>,
+    lectureId: number,
     connection: any
   ) => {
-    const newEnrollments: Array<IEnrollmentInfo> = [];
-    let id = 1;
-    lectureIds.forEach((lectureId) => {
-      //DB에러 검증을 위한 에러 발생
-      if (lectureId === 3)
-        throw new Error("DB에러 검증을 위한 임의적 에러 발생");
-      newEnrollments.push({
-        id,
-        studentId,
-        lectureId,
-      });
-      id++;
-    });
+    if (lectureId === 3) throw new Error("DB에러 검증을 위한 임의적 에러 발생");
 
-    return newEnrollments;
+    const result = {
+      id: this.id,
+      studentId,
+      lectureId
+    }
+    this.id ++
+
+    return result;
   };
 }
