@@ -1,0 +1,51 @@
+{
+  "lectures": [{
+    "title": "테스트강의2",
+    "description": "테스트강의2설명",
+    "price": 20000,
+    "teacherId": 1,
+    "categoryId": 2
+  },{
+    "title": "테스트강의3",
+    "description": "테스트강의3설명",
+    "price": 20000,
+    "teacherId": 2,
+    "categoryId": 2
+  },{
+    "title": "테스트강의4",
+    "description": "테스트강의4설명",
+    "price": 20000,
+    "teacherId": 1,
+    "categoryId": 3
+  },{
+    "title": "테스트강의5",
+    "description": "테스트강의5설명",
+    "price": 20000,
+    "teacherId": 2,
+    "categoryId": 3
+  }],
+  "enrollment": [{
+    "studentId": 2,
+    "lectureIds": [1, 2, 3, 4, 5]
+  },{
+    "studentId": 3,
+    "lectureIds": [1, 2, 3, 4]
+  },
+  {
+    "studentId": 4,
+    "lectureIds": [1, 2, 3]
+  },
+  {
+    "studentId": 5,
+    "lectureIds": [1, 2]
+  },
+  {
+    "studentId": 6,
+    "lectureIds": [1]
+  },]
+}
+/*
+* 수강생순 1, 2, 3, 4, 5, 6
+* 최신순 6, 5, 4, 3, 2, 1
+
+*/
