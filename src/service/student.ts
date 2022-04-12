@@ -9,7 +9,7 @@ import { IStudent } from "../modules/interface/student.interface";
 export class StudentService {
   constructor(private studentRepository: StudentReopsitory) {}
 
-  createStudent = async (student: IStudent) => {
+  createStudent = async (student: IStudent): Promise<string> => {
     //유저 email unique 보장을 위해 검색
     const existStudent = await this.studentRepository.findOne({
       email: student.email,
@@ -24,7 +24,7 @@ export class StudentService {
     return "Sucess create student";
   };
 
-  deleteStudent = async (id: number) => {
+  deleteStudent = async (id: number): Promise<string> => {
     const connection = await db.getConnection();
     const affectedRows = await this.studentRepository.delete(id, connection);
     db.releaseConnection(connection);
