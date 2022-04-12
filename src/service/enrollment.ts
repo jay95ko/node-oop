@@ -51,12 +51,19 @@ export class EnrollmentService {
     try {
       await connection.beginTransaction();
       for (const lectureId of lectureIds) {
-        result.push(await this.enrollmentRepository.create(
-          enrollments.studentId,
+        result.push(
+          await this.enrollmentRepository.create(
+            enrollments.studentId,
+            lectureId,
+            connection
+          )
+        );
+        const value = "studentNum + 1";
+        const affectRow = await this.lectureRepository.update(
           lectureId,
+          { studentNum: value },
           connection
-        ))
-        const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection)
+        );
         if (affectRow === 0) throw new DBError("Enrollment create error");
       }
       await connection.commit();
