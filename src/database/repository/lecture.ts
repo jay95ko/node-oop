@@ -2,6 +2,7 @@ import { Service } from "typedi";
 import DBError from "../../modules/errors/db.error";
 import {
   ILecture,
+  ILectureAddCount,
   ILectureUpdate,
 } from "../../modules/interface/lecture.interface";
 import Date from "../../util/date.util";
@@ -120,7 +121,7 @@ export class LectureReopsitory {
     return result;
   };
 
-  update = async (id: number, lecture: ILectureUpdate, connection: any) => {
+  update = async (id: number, lecture: ILectureUpdate | ILectureAddCount, connection: any) => {
     const contitions = getOrColumnForUpdateQuery(lecture);
     const sql = `UPDATE ${
       this.tableName

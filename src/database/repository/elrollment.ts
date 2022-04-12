@@ -21,17 +21,14 @@ export class EnrollmentReopsitory {
 
   create = async (
     studentId: number,
-    lectureIds: Array<number>,
+    lectureId: number,
     connection: any
   ) => {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (studentId, lectureId, createdAt) VALUES (?,?,?)`;
-    const result = [];
 
-    for (const lectureId of lectureIds) {
-      result.push(await connection.query(sql, [studentId, lectureId, nowDate]));
-      console.log(`Query : ${sql} [${studentId}, ${lectureId}, ${nowDate}]`);
-    }
+    const result =  await connection.query(sql, [studentId, lectureId, nowDate]);
+    console.log(`Query : ${sql} [${studentId}, ${lectureId}, ${nowDate}]`);
     return result;
   };
 }

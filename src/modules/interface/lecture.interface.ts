@@ -65,3 +65,7 @@ export interface ILectureDetail {
   updatedAt: string;
   students: Array<null | { id: number; name: string; enrollmentAt: string }>;
 }
+
+export interface ILectureAddCount {
+  studentNum : string
+}

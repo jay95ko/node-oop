@@ -46,15 +46,19 @@ export class EnrollmentService {
     if (lectureIds.length !== lectures.length) {
       throw new DoesNotExistError("Can not enroll not exist lecture");
     }
-
+    const result = [];
     const connection = await db.getConnection();
     try {
       await connection.beginTransaction();
-      const result = await this.enrollmentRepository.create(
-        enrollments.studentId,
-        lectureIds,
-        connection
-      );
+      for (const lectureId of lectureIds) {
+        result.push(await this.enrollmentRepository.create(
+          enrollments.studentId,
+          lectureId,
+          connection
+        ))
+        const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection)
+        if (affectRow === 0) throw new DBError("Enrollment create error");
+      }
       await connection.commit();
       return `Sucess create ${result.length} of enrollment`;
     } catch (err) {
