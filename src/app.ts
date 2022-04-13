@@ -4,12 +4,11 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import Container from "typedi";
-import { StudentController } from "./controller/student";
 import { LectureController } from "./controller/lecture";
 import { EnrollmentController } from "./controller/enrollment";
-import studentRouter from "./router/student";
-import LectureRouter from "./router/lecture";
-import enrollmentRouter from "./router/enrollment";
+import { StudentRouter } from "./router/student";
+import { LectureRouter } from "./router/lecture";
+import { EnrollmentRouter } from "./router/enrollment";
 
 class App {
   public app: express.Application;
@@ -29,13 +28,13 @@ class App {
 
   //라우터 등록
   registerRoute() {
-    const studentController = Container.get(StudentController);
-    const lectureController = Container.get(LectureController);
-    const enrollmentController = Container.get(EnrollmentController);
+    const studentRouter = Container.get(StudentRouter);
+    const lectureRouter = Container.get(LectureRouter);
+    const enrollmentRouter = Container.get(EnrollmentRouter);
 
-    this.app.use("/student", studentRouter(studentController));
-    this.app.use("/lecture", LectureRouter(lectureController));
-    this.app.use("/enrollment", enrollmentRouter(enrollmentController));
+    this.app.use("/student", studentRouter.router);
+    this.app.use("/lecture", lectureRouter.router);
+    this.app.use("/enrollment", enrollmentRouter.router);
 
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.sendStatus(404);
