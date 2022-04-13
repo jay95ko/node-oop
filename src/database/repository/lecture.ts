@@ -63,32 +63,21 @@ export class LectureReopsitory {
     ORDER BY ${ORDER_BY}
     LIMIT 20`;
     console.log(`Query : ${sql}`);
-    const result = (await db.pool.query(sql))[0];
 
-    return result;
+    return (await db.pool.query(sql))[0];
   };
 
   findByIds = async (params: Array<number>) => {
     const conditions = getOrColumnForQuery("id", params);
     const sql = `SELECT * FROM ${this.tableName} WHERE (${conditions}) AND expose = 1 AND deletedAt IS NULL`;
     console.log(`Query : ${sql}`);
-    const result = await db.pool.query(sql);
 
-    return result[0];
+    return (await db.pool.query(sql))[0];
   };
 
   create = async (lecture: ILecture, connection: any) => {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (title, description, price, teacherId, categoryId, createdAt, updatedAt) VALUES (?,?,?,?,?,?,?)`;
-    const result = await connection.query(sql, [
-        lecture.title,
-        lecture.description,
-        lecture.price,
-        lecture.teacherId,
-        lecture.categoryId,
-        nowDate,
-        nowDate,
-      ]);
     //sql 로깅
     console.log(`Query : ${sql}. [
         ${lecture.title},
@@ -99,7 +88,15 @@ export class LectureReopsitory {
         ${nowDate},
         ${nowDate},
       ]`);
-    return result;
+    return await connection.query(sql, [
+        lecture.title,
+        lecture.description,
+        lecture.price,
+        lecture.teacherId,
+        lecture.categoryId,
+        nowDate,
+        nowDate,
+      ]);
   };
 
   findOne = async (id: number) => {
@@ -111,9 +108,8 @@ export class LectureReopsitory {
       LEFT JOIN student ON enrollment.studentId = student.id AND student.deletedAt IS NULL 
     WHERE lecture.id = ${id} AND lecture.deletedAt IS NULL`;
     console.log(`Query : ${sql}`);
-    const result = (await db.pool.query(sql))[0];
 
-    return result;
+    return (await db.pool.query(sql))[0];
   };
 
   update = async (
@@ -126,18 +122,16 @@ export class LectureReopsitory {
       this.tableName
     } SET ${contitions}, updatedAt = '${this.date.getTime()}' WHERE id = ${id}`;
     console.log(`Query : ${sql}`);
-    const result = await connection.query(sql);
-    const affectedRows = result[0] ? result[0].affectedRows : 0;
+    const result = (await connection.query(sql))[0];
 
-    return affectedRows;
+    return result ? result.affectedRows : 0;
   };
 
   delete = async (id: number, connection: any) => {
     const sql = `DELETE FROM ${this.tableName} WHERE id = ${id}`;
     console.log(`Query : ${sql}`);
-    const result = await connection.query(sql);
-    const affectedRows = result[0] ? result[0].affectedRows : 0;
+    const result = (await connection.query(sql))[0];
 
-    return affectedRows;
+    return result ? result.affectedRows : 0;
   };
 }

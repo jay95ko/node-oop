@@ -13,7 +13,7 @@ export class TeacherReopsitory {
     const conditions = getOrColumnForQuery("id", params);
     const sql = `SELECT * FROM ${this.tableName} WHERE (${conditions}) AND deletedAt IS NULL`;
     console.log(`Query : ${sql}`);
-    const result = await db.pool.query(sql);
-    return result[0];
+
+    return (await db.pool.query(sql))[0];
   };
 }

@@ -38,8 +38,7 @@ export class LectureService {
     //sql 쿼리 가공작업
     const sql = this.MakeQuery(reqQuery);
 
-    const lectures = await this.lectureRepository.find(sql);
-    return lectures;
+    return await this.lectureRepository.find(sql);
   };
 
   //강의 상세정보 반환
@@ -52,9 +51,7 @@ export class LectureService {
 
     //JOIN하여 내려온 강의 상세정보 rows를 가공해야 할 필요가 있음
     //강의 상세정보와 수강생 정보를 가공
-    const result = this.makeLectureDetailWithStudent(lecture);
-
-    return result;
+    return this.makeLectureDetailWithStudent(lecture);
   };
 
   //강의 정보 생성
