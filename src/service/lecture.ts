@@ -134,8 +134,12 @@ export class LectureService {
 
     const connection = await db.getConnection();
     try {
+      const result = [];
       await connection.beginTransaction();
-      const result = await this.lectureRepository.create(lectures, connection);
+      for (const lecture of lectures) {
+        result.push(await this.lectureRepository.create(lecture, connection));
+      }
+      
 
       await connection.commit();
       return `Sucess create ${result.length} of lecture`;

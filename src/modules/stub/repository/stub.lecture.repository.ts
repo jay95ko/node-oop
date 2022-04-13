@@ -252,8 +252,8 @@ export class StubLectureRepository extends LectureReopsitory {
     );
   };
 
-  create = async (lectures: Array<ILecture>, connection: any) => {
-    if (lectures[0].title === "1") throw new Error("DB에러 검증을 위한 에러");
+  create = async (lecture: ILecture, connection: any) => {
+    if (lecture.title === "1") throw new Error("DB에러 검증을 위한 에러");
     return this.createLectureResult;
   };
 

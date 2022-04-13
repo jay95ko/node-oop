@@ -77,33 +77,28 @@ export class LectureReopsitory {
     return result[0];
   };
 
-  create = async (lectures: Array<ILecture>, connection: any) => {
+  create = async (lecture: ILecture, connection: any) => {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (title, description, price, teacherId, categoryId, createdAt, updatedAt) VALUES (?,?,?,?,?,?,?)`;
-    const result = [];
-    for (const lecture of lectures) {
-      result.push(
-        await connection.query(sql, [
-          lecture.title,
-          lecture.description,
-          lecture.price,
-          lecture.teacherId,
-          lecture.categoryId,
-          nowDate,
-          nowDate,
-        ])
-      );
-      //sql 로깅
-      console.log(`Query : ${sql}. [
-          ${lecture.title},
-          ${lecture.description},
-          ${lecture.price},
-          ${lecture.teacherId},
-          ${lecture.categoryId},
-          ${nowDate},
-          ${nowDate},
-        ]`);
-    }
+    const result = await connection.query(sql, [
+        lecture.title,
+        lecture.description,
+        lecture.price,
+        lecture.teacherId,
+        lecture.categoryId,
+        nowDate,
+        nowDate,
+      ]);
+    //sql 로깅
+    console.log(`Query : ${sql}. [
+        ${lecture.title},
+        ${lecture.description},
+        ${lecture.price},
+        ${lecture.teacherId},
+        ${lecture.categoryId},
+        ${nowDate},
+        ${nowDate},
+      ]`);
     return result;
   };
 
