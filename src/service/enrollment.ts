@@ -26,28 +26,15 @@ export class EnrollmentService {
     const lectureIds: Array<number> = [...new Set(enrollments.lectureIds)];
 
     //수강신청 하는 학생의 id가 유효값인지 확인 및 해당 id로 학생 없으면 DoesNotExistError 에러 반환
-    const student = await this.studentRepository.findOne({
-      id: enrollments.studentId,
-    });
-    if (!student) {
-      throw new DoesNotExistError("Can not enroll not exist student");
-    }
+    await this.checkValidStudent(enrollments.studentId);
 
     //수강신청 하는 학생이 기존에 수강신청한 과목을 수강하려 하는 경우 ConflictError 반환
-    const enrollmentedLectures = await this.enrollmentRepository.findById({
-      studentId: enrollments.studentId,
-    });
-    enrollmentedLectures.forEach((enrollment: IEnrollmentInfo) => {
-      if (lectureIds.includes(enrollment.lectureId)) {
-        throw new ConflictError("Can not enroll already enrolled lecture");
-      }
-    });
+    await this.checkEnrollmentedLecture(enrollments.studentId, lectureIds);
 
     //수강신청 하는 강의 목록을 조회하고 조회한 결과값과 수강신청 하는 강의의 목록의 개수가 다르면 수강신청 하려고 하는 강의가 존재하지 않는 경우이므로 DoesNotExistError 반환
-    const lectures = await this.lectureRepository.findByIds(lectureIds);
-    if (lectureIds.length !== lectures.length) {
-      throw new DoesNotExistError("Can not enroll not exist lecture");
-    }
+    await this.checkExistLecture(lectureIds);
+
+    //수강신청 테이블에 정보 저장 및 강의 테이블에 수강생수 추가
     const result = [];
     const connection = await db.getConnection();
     try {
@@ -61,14 +48,11 @@ export class EnrollmentService {
           )
         );
         const value = "studentNum + 1";
-        // const affectRow = await this.lectureRepository.update(
-        //   lectureId,
-        //   { studentNum: value },
-        //   connection
-        // ))
-
-        //수강신청을 하면 수강 테이블에 추가 및 강의 테이블에 studentNum 값을 증가 동작 수행이 안되었을 시 DBError에러 반환
-        const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection);
+        const affectRow = await this.lectureRepository.update(
+          lectureId,
+          { studentNum: value },
+          connection
+        );
         if (affectRow === 0) throw new DBError("Enrollment create error");
       }
       await connection.commit();
@@ -79,6 +63,38 @@ export class EnrollmentService {
       throw new DBError("Enrollment create error");
     } finally {
       db.releaseConnection(connection);
+    }
+  };
+
+  private checkValidStudent = async (studentId: number): Promise<void> => {
+    const student = await this.studentRepository.findOne({
+      id: studentId,
+    });
+    if (!student) {
+      throw new DoesNotExistError("Can not enroll not exist student");
+    }
+  };
+
+  private checkEnrollmentedLecture = async (
+    studentId: number,
+    lectureIds: Array<number>
+  ): Promise<void> => {
+    const enrollmentedLectures = await this.enrollmentRepository.findById({
+      studentId,
+    });
+    enrollmentedLectures.forEach((enrollment: IEnrollmentInfo) => {
+      if (lectureIds.includes(enrollment.lectureId)) {
+        throw new ConflictError("Can not enroll already enrolled lecture");
+      }
+    });
+  };
+
+  private checkExistLecture = async (
+    lectureIds: Array<number>
+  ): Promise<void> => {
+    const lectures = await this.lectureRepository.findByIds(lectureIds);
+    if (lectureIds.length !== lectures.length) {
+      throw new DoesNotExistError("Can not enroll not exist lecture");
     }
   };
 }
