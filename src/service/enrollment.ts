@@ -21,6 +21,7 @@ export class EnrollmentService {
     private date: Date
   ) {}
 
+  //수강 정보 생성
   createEnrollment = async (enrollments: IEnrollment): Promise<string> => {
     //같은 강의 수강신청 불가하기 위해 중복값 제거
     const lectureIds: Array<number> = [...new Set(enrollments.lectureIds)];

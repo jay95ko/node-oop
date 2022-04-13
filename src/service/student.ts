@@ -9,6 +9,7 @@ import { IStudent } from "../modules/interface/student.interface";
 export class StudentService {
   constructor(private studentRepository: StudentReopsitory) {}
 
+  //수강생 생성
   createStudent = async (student: IStudent): Promise<string> => {
     //유저 email unique 보장을 위해 검색 email 중복시 AlreadyExistError 반환
     await this.checkUniqueStudentByEmail(student.email);
@@ -19,6 +20,7 @@ export class StudentService {
     return "Sucess create student";
   };
 
+  //수강생 정보 삭제
   deleteStudent = async (id: number): Promise<string> => {
     const connection = await db.getConnection();
     const affectedRows = await this.studentRepository.delete(id, connection);
