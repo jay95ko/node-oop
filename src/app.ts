@@ -10,13 +10,11 @@ import { EnrollmentRouter } from "./router/enrollment";
 
 class App {
   public app: express.Application;
-  constructor(
-    private student: StudentRouter,
-    private lecture: LectureRouter,
-    private enrollment: EnrollmentRouter,
-  ) {
+  constructor() {
+    // private enrollment: EnrollmentRouter // private lecture: LectureRouter, // private student: StudentRouter,
     this.app = express();
     this.setMiddleware();
+    this.createRouter();
     this.registerRoute();
   }
 
@@ -28,11 +26,18 @@ class App {
     this.app.use(morgan("dev"));
   }
 
+  //의존성이 주입된 라우터 객체 생성
+  createRouter() {
+    Container.get(StudentRouter);
+    Container.get(LectureRouter);
+    Container.get(EnrollmentRouter);
+  }
+
   //라우터 등록
   registerRoute() {
-    this.app.use("/student", this.student.router);
-    this.app.use("/lecture", this.lecture.router);
-    this.app.use("/enrollment", this.enrollment.router);
+    this.app.use("/student", StudentRouter.router);
+    this.app.use("/lecture", LectureRouter.router);
+    this.app.use("/enrollment", EnrollmentRouter.router);
 
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.sendStatus(404);
@@ -47,8 +52,4 @@ class App {
   }
 }
 
-const studentRouter = Container.get(StudentRouter);
-const lectureRouter = Container.get(LectureRouter);
-const enrollmentRouter = Container.get(EnrollmentRouter);
-
-export const app = new App(studentRouter, lectureRouter, enrollmentRouter).app;
+export const app = new App().app;

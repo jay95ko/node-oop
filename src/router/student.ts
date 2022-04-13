@@ -6,19 +6,23 @@ import { asyncWrapper } from "../middleware/wrapper";
 
 @Service()
 export class StudentRouter {
-  public router = express.Router();
+  static router = express.Router();
   constructor(private studentController: StudentController) {
-    this.init()
+    this.init();
   }
 
   private init() {
     // POST /student
-    this.router.post(
-    "/",
-    asyncWrapper(validateCreateStudent),
-    asyncWrapper(this.studentController.createStudent))
+    StudentRouter.router.post(
+      "/",
+      asyncWrapper(validateCreateStudent),
+      asyncWrapper(this.studentController.createStudent)
+    );
 
     // DELETE /student/:id
-    this.router.delete("/:id", asyncWrapper(this.studentController.deleteStudent))
+    StudentRouter.router.delete(
+      "/:id",
+      asyncWrapper(this.studentController.deleteStudent)
+    );
   }
 }

@@ -6,17 +6,17 @@ import { asyncWrapper } from "../middleware/wrapper";
 
 @Service()
 export class EnrollmentRouter {
-  public router = express.Router();
+  static router = express.Router();
   constructor(private enrollmentController: EnrollmentController) {
-    this.init()
+    this.init();
   }
 
-  private init() {
-  // POST /enrollment
-  this.router.post(
-    "/",
-    asyncWrapper(validateCreateEnrollment),
-    asyncWrapper(this.enrollmentController.create)
-  );
+  protected init() {
+    // POST /enrollment
+    EnrollmentRouter.router.post(
+      "/",
+      asyncWrapper(validateCreateEnrollment),
+      asyncWrapper(this.enrollmentController.create)
+    );
   }
 }
