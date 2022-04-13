@@ -121,7 +121,11 @@ export class LectureReopsitory {
     return result;
   };
 
-  update = async (id: number, lecture: ILectureUpdate | ILectureAddCount, connection: any) => {
+  update = async (
+    id: number,
+    lecture: ILectureUpdate | ILectureAddCount,
+    connection: any
+  ) => {
     const contitions = getOrColumnForUpdateQuery(lecture);
     const sql = `UPDATE ${
       this.tableName

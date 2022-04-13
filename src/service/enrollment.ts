@@ -53,14 +53,22 @@ export class EnrollmentService {
     try {
       await connection.beginTransaction();
       for (const lectureId of lectureIds) {
-        result.push(await this.enrollmentRepository.create(
-          enrollments.studentId,
-          lectureId,
-          connection
-        ))
+        result.push(
+          await this.enrollmentRepository.create(
+            enrollments.studentId,
+            lectureId,
+            connection
+          )
+        );
+        const value = "studentNum + 1";
+        // const affectRow = await this.lectureRepository.update(
+        //   lectureId,
+        //   { studentNum: value },
+        //   connection
+        // ))
 
         //수강신청을 하면 수강 테이블에 추가 및 강의 테이블에 studentNum 값을 증가 동작 수행이 안되었을 시 DBError에러 반환
-        const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection)
+        const affectRow = await this.lectureRepository.update(lectureId, { studentNum: 'studentNum + 1'}, connection);
         if (affectRow === 0) throw new DBError("Enrollment create error");
       }
       await connection.commit();

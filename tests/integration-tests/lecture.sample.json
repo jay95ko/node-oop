@@ -1,0 +1,78 @@
+{
+  "lectures": [{
+    "title": "테스트강의1",
+    "description": "테스트강의1설명",
+    "price": 20000,
+    "teacherId": 1,
+    "categoryId": 2
+  },{
+    "title": "테스트강의2",
+    "description": "테스트강의2설명",
+    "price": 20000,
+    "teacherId": 2,
+    "categoryId": 2
+  },{
+    "title": "테스트강의3",
+    "description": "테스트강의3설명",
+    "price": 20000,
+    "teacherId": 1,
+    "categoryId": 3
+  },{
+    "title": "테스트강의4",
+    "description": "테스트강의4설명",
+    "price": 20000,
+    "teacherId": 2,
+    "categoryId": 3
+  },{
+    "title": "테스트강의5",
+    "description": "테스트강의5설명",
+    "price": 20000,
+    "teacherId": 3,
+    "categoryId": 3
+  }],
+  "lecturesForExpose" : [{
+    "title": "테스트강의1",
+    "description": "테스트강의1설명",
+    "price": 20000,
+    "expose": 1
+  },{
+    "title": "테스트강의2",
+    "description": "테스트강의2설명",
+    "price": 20000,
+    "expose": 1
+  },{
+    "title": "테스트강의3",
+    "description": "테스트강의3설명",
+    "price": 20000,
+    "expose": 1
+  },{
+    "title": "테스트강의4",
+    "description": "테스트강의4설명",
+    "price": 20000,
+    "expose": 1
+  },{
+    "title": "테스트강의5",
+    "description": "테스트강의5설명",
+    "price": 20000,
+    "expose": 1
+  }],
+  "enrollments": [{
+    "studentId": 1,
+    "lectureIds": [1, 2, 3, 4, 5]
+  },{
+    "studentId": 2,
+    "lectureIds": [1, 2, 3, 4]
+  },
+  {
+    "studentId": 3,
+    "lectureIds": [1, 2, 3]
+  },
+  {
+    "studentId": 4,
+    "lectureIds": [1, 2]
+  },
+  {
+    "studentId": 5,
+    "lectureIds": [1]
+  }]
+}
