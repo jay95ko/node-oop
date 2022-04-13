@@ -5,8 +5,8 @@ import { TeacherReopsitory } from "../../../database/repository/teacher";
 import { LectureService } from "../../../service/lecture";
 import Date from "../../../util/date.util";
 import {
-  ILectureDetail,
   ILectureList,
+  IManufactureLectureDetail,
 } from "../../interface/lecture.interface";
 
 export class StubLectureService extends LectureService {
@@ -51,8 +51,8 @@ export class StubLectureService extends LectureService {
     return lectureList;
   };
 
-  getLecture = async (): Promise<ILectureDetail> => {
-    const lectureDetail: ILectureDetail = {
+  getLecture = async (): Promise<IManufactureLectureDetail> => {
+    const lectureDetail: IManufactureLectureDetail = {
       id: 10,
       title: "테스트2 강좌명",
       description: "테스트2 강좌 설명입니다.",

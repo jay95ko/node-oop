@@ -103,7 +103,7 @@ export class LectureService {
   deleteLecture = async (id: number): Promise<string> => {
     //강의를 수강하는 수강생이 있는경우 강의 삭제 불가
     //삭제하려는 강의를 수가하는 학생이 있는지 확인
-    await this.checkEnrollmentedExist;
+    await this.checkEnrollmentedExist(id);
 
     const connection = await db.getConnection();
     const affectedRows = await this.lectureRepository.delete(id, connection);
