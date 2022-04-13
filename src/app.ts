@@ -19,6 +19,7 @@ class App {
     this.registerRoute();
   }
 
+  //미들웨어 등록
   setMiddleware() {
     this.app.use(express.json());
     this.app.use(helmet());
@@ -26,6 +27,7 @@ class App {
     this.app.use(morgan("dev"));
   }
 
+  //라우터 등록
   registerRoute() {
     const studentController = Container.get(StudentController);
     const lectureController = Container.get(LectureController);

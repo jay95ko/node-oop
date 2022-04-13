@@ -8,7 +8,8 @@ export class CategoryReopsitory {
     this.tableName = "category";
   }
 
-  findListById = async (params: Array<number>) => {
+  //id를 배열로 받아 해당하는 id로 카테고리 목록 조회
+  findByIds = async (params: Array<number>) => {
     const conditions = getOrColumnForQuery("id", params);
     const sql = `SELECT * FROM ${this.tableName} WHERE ${conditions}`;
     console.log(`Query : ${sql}`);

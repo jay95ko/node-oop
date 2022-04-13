@@ -6,6 +6,7 @@ import { EnrollmentService } from "../service/enrollment";
 export class EnrollmentController {
   constructor(private enrollmentService: EnrollmentService) {}
 
+  //수강 신청
   create = async (req: Request, res: Response) => {
     const { body } = req;
     const result = await this.enrollmentService.createEnrollment(body);
