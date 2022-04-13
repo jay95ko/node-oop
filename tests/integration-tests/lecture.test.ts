@@ -55,7 +55,6 @@ beforeAll(async () => {
       .set("Accept", "application/json")
       .type("application/json")
       .send(enrollment);
-    console.log(result);
   }
 });
 
@@ -290,7 +289,6 @@ describe("/lecture", () => {
         .type("application/json")
         .send();
 
-      console.log(res.body.result);
       expect(res.status).toBe(200);
       expect(res.body.result.title).toEqual("테스트강의7");
       expect(res.body.result.students.length).toEqual(2);
@@ -318,7 +316,7 @@ describe("/lecture", () => {
         test("검색 조건 없는 경우", async () => {
           const res = await request(app)
             .get("/lecture")
-            .query({ category: 2 })
+            .query({ category: 2 , order: "student"})
             .set("Accept", "application/json")
             .type("application/json")
             .send();
@@ -334,13 +332,12 @@ describe("/lecture", () => {
         test("검색 조건 강의명인 경우(강의명 = 테스트강의2)", async () => {
           const res = await request(app)
             .get("/lecture")
-            .query({ category: 2, title: "테스트강의2" })
+            .query({ category: 2, title: "테스트강의2", order: "student" })
             .set("Accept", "application/json")
             .type("application/json")
             .send();
 
           expect(res.status).toBe(200);
-          console.log(res.body.result);
           expect(res.body.result[0].title).toEqual("테스트강의2");
           expect(res.body.result[0].category).toEqual("앱");
           expect(res.body.result.length).toEqual(1);
@@ -349,13 +346,12 @@ describe("/lecture", () => {
         test("검색 조건 강사명인 경우(강사명 = 송치헌)", async () => {
           const res = await request(app)
             .get("/lecture")
-            .query({ category: 2, teacherName: "송치헌" })
+            .query({ category: 2, teacherName: "송치헌", order: "student" })
             .set("Accept", "application/json")
             .type("application/json")
             .send();
 
           expect(res.status).toBe(200);
-          console.log(res.body.result);
           expect(res.body.result[0].title).toEqual("테스트강의2");
           expect(res.body.result[0].category).toEqual("앱");
           expect(res.body.result.length).toEqual(1);
@@ -364,13 +360,12 @@ describe("/lecture", () => {
         test("검색 조건 수강생id인 경우(수강생id = 3)", async () => {
           const res = await request(app)
             .get("/lecture")
-            .query({ category: 2, teacherName: "송치헌" })
+            .query({ category: 2, teacherName: "송치헌", order: "student" })
             .set("Accept", "application/json")
             .type("application/json")
             .send();
 
           expect(res.status).toBe(200);
-          console.log(res.body.result);
           expect(res.body.result[0].title).toEqual("테스트강의2");
           expect(res.body.result[0].category).toEqual("앱");
           expect(res.body.result.length).toEqual(1);
@@ -379,170 +374,190 @@ describe("/lecture", () => {
 
       describe("카테고리 필터링이 없는 경우", () => {
         test("검색 조건 없는 경우", async () => {
-          /*
-           *전체 다 출력
-           */
+          const res = await request(app)
+          .get("/lecture")
+          .query({ order: "student" })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의1");
+        expect(res.body.result[5].title).toEqual("테스트강의5");
+        expect(res.body.result.length).toEqual(6);
         });
 
         test("검색 조건 강의명인 경우(강의명 = 테스트강의4)", async () => {
-          /*
-          * [{
-            "title": "테스트강의4",
-            "description": "테스트강의4설명",
-            "price": 20000,
-            "teacherId": 1,
-            "categoryId": 3
-          }]
-          */
+          const res = await request(app)
+          .get("/lecture")
+          .query({ order: "student", title: "테스트강의4" })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의4");
+        expect(res.body.result.length).toEqual(1);
         });
 
         test("검색 조건 강사명인 경우(강사명 = 송치헌)", async () => {
-          /*
-          * [{
-              "title": "테스트강의3",
-              "description": "테스트강의3설명",
-              "price": 20000,
-              "teacherId": 2,
-              "categoryId": 2
-            },{
-              "title": "테스트강의5",
-              "description": "테스트강의5설명",
-              "price": 20000,
-              "teacherId": 2,
-              "categoryId": 3
-            }]
-          */
+          const res = await request(app)
+          .get("/lecture")
+          .query({ order: "student", teacherName: "송치헌" })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의2");
+        expect(res.body.result[1].title).toEqual("테스트강의4");
+        expect(res.body.result[0].teacher).toEqual("송치헌");
+        expect(res.body.result[1].teacher).toEqual("송치헌");
+        expect(res.body.result.length).toEqual(2);
         });
 
         test("검색 조건 수강생id인 경우(수강생id = 3)", async () => {
-          /*
-          * [[{ 1 포함
-              "title": "테스트강의2",
-              "description": "테스트강의2설명",
-              "price": 20000,
-              "teacherId": 1,
-              "categoryId": 2
-            },{
-              "title": "테스트강의3",
-              "description": "테스트강의3설명",
-              "price": 20000,
-              "teacherId": 2,
-              "categoryId": 2
-            },{
-              "title": "테스트강의4",
-              "description": "테스트강의4설명",
-              "price": 20000,
-              "teacherId": 1,
-              "categoryId": 3
-            }]
-          */
+          const res = await request(app)
+          .get("/lecture")
+          .query({ order: "student", student: 3 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의1");
+        expect(res.body.result[2].title).toEqual("테스트강의3");
+        expect(res.body.result.length).toEqual(3);
         });
       });
     });
     describe("정렬 값이 최신순인 경우", () => {
       describe("카테고리 필터링이 있는 경우(카테고리id = 2)", () => {
         test("검색 조건 없는 경우", async () => {
-          // [{
-          //   "title": "테스트강의3",
-          //   "description": "테스트강의3설명",
-          //   "price": 20000,
-          //   "teacherId": 2,
-          //   "categoryId": 2
-          // },{
-          //   "title": "테스트강의2",
-          //   "description": "테스트강의2설명",
-          //   "price": 20000,
-          //   "teacherId": 1,
-          //   "categoryId": 2
-          // }]
+          const res = await request(app)
+          .get("/lecture")
+          .query({ category: 2 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의2");
+        expect(res.body.result[1].title).toEqual("테스트강의1");
+        expect(res.body.result[1].category).toEqual("앱");
+        expect(res.body.result.length).toEqual(2);
         });
 
-        test("검색 조건 강의명인 경우(강의명 = 테스트강의3)", async () => {
-          // [{
-          //   "title": "테스트강의3",
-          //   "description": "테스트강의3설명",
-          //   "price": 20000,
-          //   "teacherId": 2,
-          //   "categoryId": 2
-          // }]
+        test("검색 조건 강의명인 경우(강의명 = 테스트강의2)", async () => {
+          const res = await request(app)
+          .get("/lecture")
+          .query({ title: "테스트강의2", category: 2 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의2");
+        expect(res.body.result[0].category).toEqual("앱");
+        expect(res.body.result.length).toEqual(1);
         });
 
         test("검색 조건 강사명인 경우(강사명 = 송치헌)", async () => {
-          // [{
-          //   "title": "테스트강의3",
-          //   "description": "테스트강의3설명",
-          //   "price": 20000,
-          //   "teacherId": 2,
-          //   "categoryId": 2
-          // }]
+          const res = await request(app)
+          .get("/lecture")
+          .query({ teacherName: "송치헌", category: 2 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의2");
+        expect(res.body.result[0].category).toEqual("앱");
+        expect(res.body.result.length).toEqual(1);
         });
 
         test("검색 조건 수강생id인 경우(수강생id = 2)", async () => {
-          // [{
-          //   "title": "테스트강의3",
-          //   "description": "테스트강의3설명",
-          //   "price": 20000,
-          //   "teacherId": 2,
-          //   "categoryId": 2
-          // },{
-          //   "title": "테스트강의2",
-          //   "description": "테스트강의2설명",
-          //   "price": 20000,
-          //   "teacherId": 1,
-          //   "categoryId": 2
-          // }]
+          const res = await request(app)
+          .get("/lecture")
+          .query({ student: 2, category: 2 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의2");
+        expect(res.body.result[1].title).toEqual("테스트강의1");
+        expect(res.body.result[0].category).toEqual("앱");
+        expect(res.body.result.length).toEqual(2);
         });
       });
 
       describe("카테고리 필터링이 없는 경우", () => {
         test("검색 조건 없는 경우", async () => {
-          //전체 역순
+          const res = await request(app)
+          .get("/lecture")
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의7");
+        expect(res.body.result[5].title).toEqual("테스트강의1");
+        expect(res.body.result.length).toEqual(6);
         });
 
         test("검색 조건 강의명인 경우(강의명 = 테스트강의5)", async () => {
-          // [{
-          //   "title": "테스트강의5",
-          //   "description": "테스트강의5설명",
-          //   "price": 20000,
-          //   "teacherId": 2,
-          //   "categoryId": 3
-          // }]
+          const res = await request(app)
+          .get("/lecture")
+          .query({ title: "테스트강의5" })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의5");
+        expect(res.body.result.length).toEqual(1);
         });
 
         test("검색 조건 강사명인 경우(강사명 = 송치헌)", async () => {
-          [
-            {
-              title: "테스트강의5",
-              description: "테스트강의5설명",
-              price: 20000,
-              teacherId: 2,
-              categoryId: 3,
-            },
-            {
-              title: "테스트강의3",
-              description: "테스트강의3설명",
-              price: 20000,
-              teacherId: 2,
-              categoryId: 2,
-            },
-          ];
+          const res = await request(app)
+          .get("/lecture")
+          .query({ teacherName: "송치헌" })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의4");
+        expect(res.body.result[1].title).toEqual("테스트강의2");
+        expect(res.body.result.length).toEqual(2);
         });
 
         test("검색 조건 수강생id인 경우(수강생id = 5)", async () => {
-          // [[1번 들어가야 함
-          //   {
-          //   "title": "테스트강의2",
-          //   "description": "테스트강의2설명",
-          //   "price": 20000,
-          //   "teacherId": 1,
-          //   "categoryId": 2
-          // }]
+          const res = await request(app)
+          .get("/lecture")
+          .query({ student: 5 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body.result[0].title).toEqual("테스트강의1");
+        expect(res.body.result.length).toEqual(1);
         });
       });
     });
 
     test("검색 조건에 부합하는 결과 없는 경우(카테고리id = 6)", async () => {
-      // []
+      const res = await request(app)
+          .get("/lecture")
+          .query({ category: 6 })
+          .set("Accept", "application/json")
+          .type("application/json")
+          .send();
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({ result: [] });
     });
   });
 });

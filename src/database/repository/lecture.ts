@@ -54,7 +54,7 @@ export class LectureReopsitory {
     let WHERE_LIMIT = "";
     if (params.limit) WHERE_LIMIT = `AND ${params.order} < ${params.limit}`;
 
-    const ORDER_BY = `${params.order} ASC`;
+    const ORDER_BY = `${params.order} DESC`;
 
     const sql = `SELECT lecture.id, lecture.title, lecture.description, category.category as category, lecture.price, lecture.studentNum, lecture.createdAt, teacher.name as teacher
     FROM ${this.tableName}
