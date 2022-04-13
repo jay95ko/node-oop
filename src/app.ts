@@ -4,15 +4,17 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import Container from "typedi";
-import { LectureController } from "./controller/lecture";
-import { EnrollmentController } from "./controller/enrollment";
 import { StudentRouter } from "./router/student";
 import { LectureRouter } from "./router/lecture";
 import { EnrollmentRouter } from "./router/enrollment";
 
 class App {
   public app: express.Application;
-  constructor() {
+  constructor(
+    private student: StudentRouter,
+    private lecture: LectureRouter,
+    private enrollment: EnrollmentRouter,
+  ) {
     this.app = express();
     this.setMiddleware();
     this.registerRoute();
@@ -28,13 +30,9 @@ class App {
 
   //라우터 등록
   registerRoute() {
-    const studentRouter = Container.get(StudentRouter);
-    const lectureRouter = Container.get(LectureRouter);
-    const enrollmentRouter = Container.get(EnrollmentRouter);
-
-    this.app.use("/student", studentRouter.router);
-    this.app.use("/lecture", lectureRouter.router);
-    this.app.use("/enrollment", enrollmentRouter.router);
+    this.app.use("/student", this.student.router);
+    this.app.use("/lecture", this.lecture.router);
+    this.app.use("/enrollment", this.enrollment.router);
 
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.sendStatus(404);
@@ -48,4 +46,9 @@ class App {
     );
   }
 }
-export const app = new App().app;
+
+const studentRouter = Container.get(StudentRouter);
+const lectureRouter = Container.get(LectureRouter);
+const enrollmentRouter = Container.get(EnrollmentRouter);
+
+export const app = new App(studentRouter, lectureRouter, enrollmentRouter).app;
