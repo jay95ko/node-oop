@@ -165,7 +165,7 @@ export class LectureService {
     return sql;
   };
 
-  makeLectureDetailWithStudent = (
+  private makeLectureDetailWithStudent = (
     lecture: Array<ILectureDetail>
   ): IManufactureLectureDetail => {
     const students: Array<ILectureDetailStudent> = [];
@@ -184,7 +184,9 @@ export class LectureService {
     return { ...lectureDetail[0], students };
   };
 
-  checkValidReference = async (lectures: Array<ILecture>): Promise<void> => {
+  private checkValidReference = async (
+    lectures: Array<ILecture>
+  ): Promise<void> => {
     let categoryIds: Array<number> = [];
     let teacherIds: Array<number> = [];
 
@@ -209,7 +211,7 @@ export class LectureService {
     }
   };
 
-  checkEnrollmentedExist = async (id: number): Promise<void> => {
+  private checkEnrollmentedExist = async (id: number): Promise<void> => {
     //수강 테이블에 강의 id로 조회 값이 있는 경우 수강생이 있는 경우로 삭제 불가 ConflictError 반환
     const enrollments = await this.enrollmentRepository.findById({
       lectureId: id,
