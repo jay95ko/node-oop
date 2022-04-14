@@ -10,15 +10,13 @@ import {
   IEnrollment,
   IEnrollmentInfo,
 } from "../modules/interface/enrollment.interface";
-import Date from "../util/date.util";
 
 @Service()
 export class EnrollmentService {
   constructor(
     private enrollmentRepository: EnrollmentReopsitory,
     private lectureRepository: LectureReopsitory,
-    private studentRepository: StudentReopsitory,
-    private date: Date
+    private studentRepository: StudentReopsitory
   ) {}
 
   //수강 정보 생성

@@ -8,10 +8,9 @@ export class StubEnrollmentService extends EnrollmentService {
   constructor(
     enrollmentRepository: EnrollmentReopsitory,
     lectureRepository: LectureReopsitory,
-    studentRepository: StudentReopsitory,
-    date: Date
+    studentRepository: StudentReopsitory
   ) {
-    super(enrollmentRepository, lectureRepository, studentRepository, date);
+    super(enrollmentRepository, lectureRepository, studentRepository);
   }
   createEnrollment = async () => {
     return "Sucess create 1 of enrollment";

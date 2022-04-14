@@ -23,8 +23,7 @@ describe("StudentService", () => {
     enrollmentService = new EnrollmentService(
       stubEnrollmentRepository,
       stubLectureRepository,
-      stubStudentRepository,
-      date
+      stubStudentRepository
     );
   });
 
