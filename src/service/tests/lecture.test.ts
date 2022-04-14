@@ -1,8 +1,6 @@
 import "reflect-metadata";
 import Container from "typedi";
 import Date from "../../util/date.util";
-import { StubEnrollmentRepository } from "../../modules/stub/repository/stub.enrollment.repository";
-import { StubLectureRepository } from "../../modules/stub/repository/stub.lecture.repository";
 import { StubTeacherRepository } from "../../modules/stub/repository/stub.teacher.repository";
 import { StubCategoryRepository } from "../../modules/stub/repository/stub.category.repository";
 import { LectureService } from "../lecture";
@@ -13,6 +11,8 @@ import {
 import DoesNotExistError from "../../modules/errors/alreadyExist.error copy";
 import DBError from "../../modules/errors/db.error";
 import ConflictError from "../../modules/errors/conflit.error";
+import { StubLectureRepository } from "../../modules/stub/repository/stub.lecture.repository";
+import { StubEnrollmentRepository } from "../../modules/stub/repository/stub.enrollment.repository";
 
 describe("LectureService", () => {
   let lectureService: LectureService;

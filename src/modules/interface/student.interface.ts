@@ -1,4 +1,4 @@
-export interface IStudent {
+export type IStudent = {
   email: string;
   name: string;
-}
+};

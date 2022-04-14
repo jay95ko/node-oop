@@ -15,8 +15,7 @@ export class EnrollmentReopsitory {
 
     const sql = `SELECT * FROM ${this.tableName} WHERE ${key} = ${value}`;
     console.log(`Query : ${sql}`);
-    const result = await db.pool.query(sql);
-    return result[0];
+    return (await db.pool.query(sql))[0];
   };
 
   create = async (
@@ -27,8 +26,7 @@ export class EnrollmentReopsitory {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (studentId, lectureId, createdAt) VALUES (?,?,?)`;
 
-    const result =  await connection.query(sql, [studentId, lectureId, nowDate]);
     console.log(`Query : ${sql} [${studentId}, ${lectureId}, ${nowDate}]`);
-    return result;
+    return await connection.query(sql, [studentId, lectureId, nowDate]);
   };
 }

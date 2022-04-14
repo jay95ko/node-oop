@@ -5,10 +5,13 @@ import ConflictError from "../modules/errors/conflit.error";
 import {
   ILecture,
   ILectureColDetail,
+  ILectureDetail,
+  ILectureDetailStudent,
   ILectureList,
   ILectureQuery,
   ILectureSqlParams,
   ILectureUpdate,
+  IManufactureLectureDetail,
 } from "../modules/interface/lecture.interface";
 import Date from "../util/date.util";
 import db from "../database/db";
@@ -28,12 +31,92 @@ export class LectureService {
     private date: Date
   ) {}
 
+  //강의 목록 반환
   getLectureList = async (
     reqQuery: ILectureQuery
   ): Promise<Array<ILectureList>> => {
     //sql 쿼리 가공작업
+    const sql = this.MakeQuery(reqQuery);
+
+    return await this.lectureRepository.find(sql);
+  };
+
+  //강의 상세정보 반환
+  getLecture = async (id: number): Promise<IManufactureLectureDetail> => {
+    //강의 id로 조회 정보 없으면 DoesNotExistError
+    let lecture = await this.lectureRepository.findOne(id);
+    if (lecture.length < 1) {
+      throw new DoesNotExistError("Does not exist lecture");
+    }
+
+    //JOIN하여 내려온 강의 상세정보 rows를 가공해야 할 필요가 있음
+    //강의 상세정보와 수강생 정보를 가공
+    return this.makeLectureDetailWithStudent(lecture);
+  };
+
+  //강의 정보 생성
+  createLecture = async (lectures: Array<ILecture>): Promise<string> => {
+    //강의 생성 시 categoryId, teacherId 값 유효한 참조하는지 확인
+    await this.checkValidReference(lectures);
+
+    const connection = await db.getConnection();
+    try {
+      const result = [];
+      await connection.beginTransaction();
+      for (const lecture of lectures) {
+        result.push(await this.lectureRepository.create(lecture, connection));
+      }
+
+      await connection.commit();
+      return `Sucess create ${result.length} of lecture`;
+    } catch (err) {
+      console.error(err);
+      await connection.rollback();
+      throw new DBError("Lecture create error");
+    } finally {
+      db.releaseConnection(connection);
+    }
+  };
+
+  updateLecture = async (
+    id: number,
+    lecture: ILectureUpdate
+  ): Promise<string> => {
+    const connection = await db.getConnection();
+    const affectedRows = await this.lectureRepository.update(
+      id,
+      lecture,
+      connection
+    );
+    db.releaseConnection(connection);
+
+    //affectedRows 체크 update된 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
+    if (affectedRows === 0) {
+      throw new DoesNotExistError("Does not exist lecture for update");
+    }
+    return "Sucess update lecture";
+  };
+
+  deleteLecture = async (id: number): Promise<string> => {
+    //강의를 수강하는 수강생이 있는경우 강의 삭제 불가
+    //삭제하려는 강의를 수가하는 학생이 있는지 확인
+    await this.checkEnrollmentedExist(id);
+
+    const connection = await db.getConnection();
+    const affectedRows = await this.lectureRepository.delete(id, connection);
+    db.releaseConnection(connection);
+
+    //affectedRows 체크 delete 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
+    if (affectedRows === 0) {
+      throw new DoesNotExistError("Does not exist lecture by id for delete");
+    }
+
+    return "Sucess delete lecture";
+  };
+
+  private MakeQuery = (query: ILectureQuery): ILectureSqlParams => {
     let order = "";
-    if (!reqQuery.order) {
+    if (!query.order) {
       order = "lecture.id";
     } else {
       order = "lecture.studentNum";
@@ -53,15 +136,15 @@ export class LectureService {
           on: "lecture.teacherId = teacher.id",
         },
       ],
-      limit: reqQuery.limit,
+      limit: query.limit,
     };
 
-    if (reqQuery.title) {
-      sql.where = [{ title: `${reqQuery.title}` }];
-    } else if (reqQuery.teacherName) {
-      sql.where = [{ teacherName: `${reqQuery.teacherName}` }];
-    } else if (reqQuery.student) {
-      sql.where = [{ studentId: reqQuery.student }];
+    if (query.title) {
+      sql.where = [{ title: `${query.title}` }];
+    } else if (query.teacherName) {
+      sql.where = [{ teacherName: `${query.teacherName}` }];
+    } else if (query.student) {
+      sql.where = [{ studentId: query.student }];
       sql.include.push({
         model: "enrollment",
         require: false,
@@ -69,30 +152,23 @@ export class LectureService {
       });
     }
 
-    if (reqQuery.category) {
+    if (query.category) {
       if (!sql.where) {
-        sql.where = [{ categoryId: reqQuery.category }];
+        sql.where = [{ categoryId: query.category }];
       } else {
-        sql.where.push({ categoryId: reqQuery.category });
+        sql.where.push({ categoryId: query.category });
       }
     }
-
-    const lectures = await this.lectureRepository.find(sql);
-    return lectures;
+    return sql;
   };
 
-  getLecture = async (id: number) => {
-    //강의 id로 조회 정보 없으면 DoesNotExistError
-    let lecture = await this.lectureRepository.findOne(id);
-    if (lecture.length < 1) {
-      throw new DoesNotExistError("Does not exist lecture");
-    }
-
-    const students: Array<any> = [];
-
-    //수강하는 학생들의 정보를 배열에 담기 위해 조회한 lecture 데이터 순회
-    lecture = lecture.map((lecturecols: ILectureColDetail) => {
-      const { student_id, student_name, enrollmentAt, ...otherLecture } = lecturecols;
+  private makeLectureDetailWithStudent = (
+    lecture: Array<ILectureDetail>
+  ): IManufactureLectureDetail => {
+    const students: Array<ILectureDetailStudent> = [];
+    const lectureDetail = lecture.map((lecturecols: ILectureColDetail) => {
+      const { student_id, student_name, enrollmentAt, ...lectureInfo } =
+        lecturecols;
       if (student_id) {
         students.push({
           id: student_id,
@@ -100,15 +176,14 @@ export class LectureService {
           enrollmentAt: this.date.formatDate(enrollmentAt),
         });
       }
-      return otherLecture;
+      return lectureInfo;
     });
-    const result = lecture[0];
-    result.students = students;
-
-    return result;
+    return { ...lectureDetail[0], students };
   };
 
-  createLecture = async (lectures: Array<ILecture>) => {
+  private checkValidReference = async (
+    lectures: Array<ILecture>
+  ): Promise<void> => {
     let categoryIds: Array<number> = [];
     let teacherIds: Array<number> = [];
 
@@ -131,41 +206,10 @@ export class LectureService {
     ) {
       throw new DoesNotExistError("Can not ref not exist value");
     }
-
-    const connection = await db.getConnection();
-    try {
-      await connection.beginTransaction();
-      const result = await this.lectureRepository.create(lectures, connection);
-
-      await connection.commit();
-      return `Sucess create ${result.length} of lecture`;
-    } catch (err) {
-      console.error(err);
-      await connection.rollback();
-      throw new DBError("Lecture create error");
-    } finally {
-      db.releaseConnection(connection);
-    }
   };
 
-  updateLecture = async (id: number, lecture: ILectureUpdate) => {
-    const connection = await db.getConnection();
-    const affectedRows = await this.lectureRepository.update(
-      id,
-      lecture,
-      connection
-    );
-    db.releaseConnection(connection);
-
-    //affectedRows 체크 update된 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
-    if (affectedRows === 0) {
-      throw new DoesNotExistError("Does not exist lecture for update");
-    }
-    return "Sucess update lecture";
-  };
-
-  //수강 테이블에 강의 id로 조회 값이 있는 경우 수강생이 있는 경우로 삭제 불가 ConflictError 반환
-  deleteLecture = async (id: number) => {
+  private checkEnrollmentedExist = async (id: number): Promise<void> => {
+    //수강 테이블에 강의 id로 조회 값이 있는 경우 수강생이 있는 경우로 삭제 불가 ConflictError 반환
     const enrollments = await this.enrollmentRepository.findById({
       lectureId: id,
     });
@@ -175,16 +219,5 @@ export class LectureService {
         "Can not delete lecture becuse exist enrollment student"
       );
     }
-
-    const connection = await db.getConnection();
-    const affectedRows = await this.lectureRepository.delete(id, connection);
-    db.releaseConnection(connection);
-
-    //affectedRows 체크 delete 값이 없다면 affectedRows 값이 0이며 id로 조회한 강의 값이 없는 경우로 DoesNotExistError 반환
-    if (affectedRows === 0) {
-      throw new DoesNotExistError("Does not exist lecture by id for delete");
-    }
-
-    return "Sucess delete lecture";
   };
 }

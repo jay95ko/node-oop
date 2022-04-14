@@ -4,18 +4,17 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import Container from "typedi";
-import { StudentController } from "./controller/student";
-import { LectureController } from "./controller/lecture";
-import { EnrollmentController } from "./controller/enrollment";
-import studentRouter from "./router/student";
-import LectureRouter from "./router/lecture";
-import enrollmentRouter from "./router/enrollment";
+import { StudentRouter } from "./router/student";
+import { LectureRouter } from "./router/lecture";
+import { EnrollmentRouter } from "./router/enrollment";
 
 class App {
   public app: express.Application;
   constructor() {
+    // private enrollment: EnrollmentRouter // private lecture: LectureRouter, // private student: StudentRouter,
     this.app = express();
     this.setMiddleware();
+    this.createRouter();
     this.registerRoute();
   }
 
@@ -27,15 +26,18 @@ class App {
     this.app.use(morgan("dev"));
   }
 
+  //의존성이 주입된 라우터 객체 생성
+  createRouter() {
+    Container.get(StudentRouter);
+    Container.get(LectureRouter);
+    Container.get(EnrollmentRouter);
+  }
+
   //라우터 등록
   registerRoute() {
-    const studentController = Container.get(StudentController);
-    const lectureController = Container.get(LectureController);
-    const enrollmentController = Container.get(EnrollmentController);
-
-    this.app.use("/student", studentRouter(studentController));
-    this.app.use("/lecture", LectureRouter(lectureController));
-    this.app.use("/enrollment", enrollmentRouter(enrollmentController));
+    this.app.use("/student", StudentRouter.router);
+    this.app.use("/lecture", LectureRouter.router);
+    this.app.use("/enrollment", EnrollmentRouter.router);
 
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.sendStatus(404);
@@ -49,4 +51,5 @@ class App {
     );
   }
 }
+
 export const app = new App().app;

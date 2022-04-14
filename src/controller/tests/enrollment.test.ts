@@ -14,12 +14,10 @@ describe("EnrollmentController", () => {
     const studentRepository = Container.get(StudentReopsitory);
     const lectureRepository = Container.get(LectureReopsitory);
     const enrollmentReopsitory = Container.get(EnrollmentReopsitory);
-    const date = Container.get(Date);
     const stubsEnrollmentService = new StubEnrollmentService(
       enrollmentReopsitory,
       lectureRepository,
-      studentRepository,
-      date
+      studentRepository
     );
     enrollmentController = new EnrollmentController(stubsEnrollmentService);
   });
