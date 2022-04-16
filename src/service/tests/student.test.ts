@@ -5,6 +5,7 @@ import Date from "../../util/date.util";
 import { StubStudentRepository } from "../../modules/stub/repository/stub.student.repository";
 import AlreadyExistError from "../../modules/errors/alreadyExist.error";
 import DoesNotExistError from "../../modules/errors/alreadyExist.error copy";
+import DBError from "../../modules/errors/db.error";
 
 describe("StudentService", () => {
   let studentService: StudentService;
@@ -37,6 +38,17 @@ describe("StudentService", () => {
       }).rejects.toThrowError(
         new AlreadyExistError("Already exist student by email")
       );
+    });
+
+    it("DB에 회원정보 추가 안되었을 경우 DBError 발생", async () => {
+      const student = {
+        email: "test@inflab.com",
+        name: "inflab2",
+      };
+
+      await expect(async () => {
+        await studentService.createStudent(student);
+      }).rejects.toThrowError(new DBError("Student create error with DB"));
     });
   });
 
