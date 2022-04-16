@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { number } from "joi";
 import { Service } from "typedi";
 import { ILectureQuery } from "../modules/interface/lecture.interface";
 import { LectureService } from "../service/lecture";
@@ -37,12 +38,10 @@ export class LectureController {
   //강의 수정
   update = async (req: Request, res: Response) => {
     const { params, body } = req;
+    const id = parseInt(params.id);
 
     res.status(200).send({
-      result: await this.lectureService.updateLecture(
-        parseInt(params.id),
-        body
-      ),
+      result: await this.lectureService.updateLecture({ id, lecture: body }),
     });
   };
 
@@ -50,10 +49,8 @@ export class LectureController {
   delete = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res
-      .status(204)
-      .send({
-        result: await this.lectureService.deleteLecture(parseInt(params.id)),
-      });
+    res.status(204).send({
+      result: await this.lectureService.deleteLecture(parseInt(params.id)),
+    });
   };
 }

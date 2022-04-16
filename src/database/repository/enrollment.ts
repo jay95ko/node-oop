@@ -1,4 +1,8 @@
 import { Service } from "typedi";
+import {
+  IEnrollmentCreate,
+  IEnrollmentFindById,
+} from "../../modules/interface/enrollment.interface";
 import Date from "../../util/date.util";
 import db from "../db";
 
@@ -8,7 +12,7 @@ export class EnrollmentRepository {
     this.tableName = "enrollment";
   }
 
-  findById = async (params: object) => {
+  findById = async (params: IEnrollmentFindById) => {
     const key = Object.keys(params)[0];
     const value = Object.values(params)[0];
 
@@ -17,7 +21,10 @@ export class EnrollmentRepository {
     return (await db.pool.query(sql))[0];
   };
 
-  create = async (studentId: number, lectureId: number, connection: any) => {
+  create = async (
+    { studentId, lectureId }: IEnrollmentCreate,
+    connection: any
+  ) => {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (studentId, lectureId, createdAt) VALUES (?,?,?)`;
 

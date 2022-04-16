@@ -359,15 +359,17 @@ describe("LectureService", () => {
   describe("강의 수정", () => {
     it("존재하지 않는 강의를 수정했을 경우 DoesNotExistError 발생", async () => {
       const lecture: ILectureUpdate = {
-        title: "테스트 강좌명",
-        description: "테스트 강좌 설명입니다.",
-        price: 10000,
-        expose: 1,
+        id: 5,
+        lecture: {
+          title: "테스트 강좌명",
+          description: "테스트 강좌 설명입니다.",
+          price: 10000,
+          expose: 1,
+        },
       };
-      const id = 5;
 
       await expect(async () => {
-        await lectureService.updateLecture(id, lecture);
+        await lectureService.updateLecture(lecture);
       }).rejects.toThrowError(
         new DoesNotExistError("Does not exist lecture for update")
       );
@@ -375,14 +377,16 @@ describe("LectureService", () => {
 
     it("강의 수정이 정상적으로 완료되었을 경우 Success update lecture 반환", async () => {
       const lecture: ILectureUpdate = {
-        title: "테스트 강좌명",
-        description: "테스트 강좌 설명입니다.",
-        price: 10000,
-        expose: 1,
+        id: 1,
+        lecture: {
+          title: "테스트 강좌명",
+          description: "테스트 강좌 설명입니다.",
+          price: 10000,
+          expose: 1,
+        },
       };
-      const id = 1;
 
-      const result = await lectureService.updateLecture(id, lecture);
+      const result = await lectureService.updateLecture(lecture);
 
       expect(result).toEqual("Success update lecture");
     });

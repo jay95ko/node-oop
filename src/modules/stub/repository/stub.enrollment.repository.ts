@@ -1,5 +1,9 @@
 import { EnrollmentRepository } from "../../../database/repository/enrollment";
 import Date from "../../../util/date.util";
+import {
+  IEnrollmentCreate,
+  IEnrollmentFindById,
+} from "../../interface/enrollment.interface";
 
 export class StubEnrollmentRepository extends EnrollmentRepository {
   private existEnrollment = [
@@ -14,7 +18,7 @@ export class StubEnrollmentRepository extends EnrollmentRepository {
     super(date, tableName);
   }
 
-  findById = async (params: object) => {
+  findById = async (params: IEnrollmentFindById) => {
     const key = Object.keys(params)[0];
     const value = Object.values(params)[0];
     if (key === "lectureId") {
@@ -29,7 +33,7 @@ export class StubEnrollmentRepository extends EnrollmentRepository {
     return [];
   };
 
-  create = async (studentId: number, lectureId: number, connection: any) => {
+  create = async ({ studentId, lectureId }: IEnrollmentCreate) => {
     if (lectureId === 3) throw new Error("DB에러 검증을 위한 임의적 에러 발생");
 
     const result = {

@@ -237,11 +237,6 @@ describe("/lecture", () => {
 
   describe("GET /lecture/:id", () => {
     test("존재하는 강의 상세정보 요청의 경우", async () => {
-      /*
-       * 강의 생성 카테고리1 선생님1
-       * 학생 생성 * 2 위에서 했음
-       * 강의 수강 * 학생1로 신청
-       */
       //사용 할 강의 생성
       await request(app)
         .post("/lecture")

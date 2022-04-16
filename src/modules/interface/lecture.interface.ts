@@ -1,3 +1,5 @@
+import { types } from "joi";
+
 export type ILecture = {
   title: string;
   description: string;
@@ -21,6 +23,11 @@ export type ILectureColDetail = {
 };
 
 export type ILectureUpdate = {
+  id: number;
+  lecture: ILectureUpdateInfo | ILectureAddCount;
+};
+
+export type ILectureUpdateInfo = {
   title: string;
   description: string;
   price: number;
@@ -37,11 +44,24 @@ export type ILectureQuery = {
 };
 
 export type ILectureSqlParams = {
-  where?: Array<Object>;
+  where?: Array<ILectureSqlWhereParams>;
   order: string;
   category?: number | string;
   limit?: number | string;
-  include: Array<Object>;
+  include: Array<ILectureSqlIncludeParams>;
+};
+
+export type ILectureSqlWhereParams = {
+  title?: string;
+  teacherName?: string;
+  categoryId?: number;
+  studentId?: number;
+};
+
+export type ILectureSqlIncludeParams = {
+  model: string;
+  require: boolean;
+  on: string;
 };
 
 export type ILectureList = {

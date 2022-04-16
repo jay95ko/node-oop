@@ -16,7 +16,7 @@ export class StubCategoryRepository extends CategoryRepository {
   }
 
   findByIds = async (params: Array<number>) => {
-    let result: any = [];
+    let result: Array<{ id: number; category: string }> = [];
     this.existCategory.forEach((category) => {
       if (params.includes(category.id) && !result.includes(category)) {
         result.push(category);

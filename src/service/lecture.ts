@@ -4,6 +4,7 @@ import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import ConflictError from "../modules/errors/conflict.error";
 import {
   ILecture,
+  ILectureAddCount,
   ILectureColDetail,
   ILectureDetail,
   ILectureDetailStudent,
@@ -11,6 +12,7 @@ import {
   ILectureQuery,
   ILectureSqlParams,
   ILectureUpdate,
+  ILectureUpdateInfo,
   IManufactureLectureDetail,
 } from "../modules/interface/lecture.interface";
 import Date from "../util/date.util";
@@ -61,11 +63,12 @@ export class LectureService {
 
     const connection = await db.getConnection();
     try {
-      const result = [];
       await connection.beginTransaction();
-      for (const lecture of lectures) {
-        result.push(await this.lectureRepository.create(lecture, connection));
-      }
+      const result = await Promise.all(
+        lectures.map(async (lecture) => {
+          return await this.lectureRepository.create(lecture, connection);
+        })
+      );
 
       await connection.commit();
       return `Success create ${result.length} of lecture`;
@@ -78,14 +81,13 @@ export class LectureService {
     }
   };
 
-  updateLecture = async (
-    id: number,
-    lecture: ILectureUpdate
-  ): Promise<string> => {
+  updateLecture = async ({ id, lecture }: ILectureUpdate): Promise<string> => {
     const connection = await db.getConnection();
     const affectedRows = await this.lectureRepository.update(
-      id,
-      lecture,
+      {
+        id,
+        lecture,
+      },
       connection
     );
     db.releaseConnection(connection);

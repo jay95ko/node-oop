@@ -20,7 +20,7 @@ export class StubTeacherRepository extends TeacherRepository {
   }
 
   findByIds = async (params: Array<number>) => {
-    let result: any = [];
+    let result: Array<{ id: number; name: string }> = [];
     this.existTeacher.forEach((teacher) => {
       if (params.includes(teacher.id) && !result.includes(teacher)) {
         result.push(teacher);
