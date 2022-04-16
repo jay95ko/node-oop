@@ -1,10 +1,10 @@
 import { Service } from "typedi";
 import db from "../database/db";
-import { EnrollmentReopsitory } from "../database/repository/elrollment";
-import { LectureReopsitory } from "../database/repository/lecture";
-import { StudentReopsitory } from "../database/repository/student";
+import { EnrollmentRepository } from "../database/repository/enrollment";
+import { LectureRepository } from "../database/repository/lecture";
+import { StudentRepository } from "../database/repository/student";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
-import ConflictError from "../modules/errors/conflit.error";
+import ConflictError from "../modules/errors/conflict.error";
 import DBError from "../modules/errors/db.error";
 import {
   IEnrollment,
@@ -14,9 +14,9 @@ import {
 @Service()
 export class EnrollmentService {
   constructor(
-    private enrollmentRepository: EnrollmentReopsitory,
-    private lectureRepository: LectureReopsitory,
-    private studentRepository: StudentReopsitory
+    private enrollmentRepository: EnrollmentRepository,
+    private lectureRepository: LectureRepository,
+    private studentRepository: StudentRepository
   ) {}
 
   //수강 정보 생성
@@ -28,7 +28,7 @@ export class EnrollmentService {
     await this.checkValidStudent(enrollments.studentId);
 
     //수강신청 하는 학생이 기존에 수강신청한 과목을 수강하려 하는 경우 ConflictError 반환
-    await this.checkEnrollmentedLecture(enrollments.studentId, lectureIds);
+    await this.checkEnrolledLecture(enrollments.studentId, lectureIds);
 
     //수강신청 하는 강의 목록을 조회하고 조회한 결과값과 수강신청 하는 강의의 목록의 개수가 다르면 수강신청 하려고 하는 강의가 존재하지 않는 경우이므로 DoesNotExistError 반환
     await this.checkExistLecture(lectureIds);
@@ -55,7 +55,7 @@ export class EnrollmentService {
         if (affectRow === 0) throw new DBError("Enrollment create error");
       }
       await connection.commit();
-      return `Sucess create ${result.length} of enrollment`;
+      return `Success create ${result.length} of enrollment`;
     } catch (err) {
       console.error(err);
       await connection.rollback();
@@ -74,14 +74,14 @@ export class EnrollmentService {
     }
   };
 
-  private checkEnrollmentedLecture = async (
+  private checkEnrolledLecture = async (
     studentId: number,
     lectureIds: Array<number>
   ): Promise<void> => {
-    const enrollmentedLectures = await this.enrollmentRepository.findById({
+    const enrolledLectures = await this.enrollmentRepository.findById({
       studentId,
     });
-    enrollmentedLectures.forEach((enrollment: IEnrollmentInfo) => {
+    enrolledLectures.forEach((enrollment: IEnrollmentInfo) => {
       if (lectureIds.includes(enrollment.lectureId)) {
         throw new ConflictError("Can not enroll already enrolled lecture");
       }

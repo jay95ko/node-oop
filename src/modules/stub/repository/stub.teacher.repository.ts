@@ -1,6 +1,6 @@
-import { TeacherReopsitory } from "../../../database/repository/teacher";
+import { TeacherRepository } from "../../../database/repository/teacher";
 
-export class StubTeacherRepository extends TeacherReopsitory {
+export class StubTeacherRepository extends TeacherRepository {
   private existTeacher = [
     {
       id: 1,

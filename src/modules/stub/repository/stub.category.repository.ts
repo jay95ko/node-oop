@@ -1,6 +1,6 @@
-import { CategoryReopsitory } from "../../../database/repository/category";
+import { CategoryRepository } from "../../../database/repository/category";
 
-export class StubCategoryRepository extends CategoryReopsitory {
+export class StubCategoryRepository extends CategoryRepository {
   private existCategory = [
     {
       id: 1,

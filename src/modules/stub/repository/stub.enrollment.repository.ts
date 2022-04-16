@@ -1,8 +1,7 @@
-import { EnrollmentReopsitory } from "../../../database/repository/elrollment";
+import { EnrollmentRepository } from "../../../database/repository/enrollment";
 import Date from "../../../util/date.util";
-import { IEnrollmentInfo } from "../../interface/enrollment.interface";
 
-export class StubEnrollmentRepository extends EnrollmentReopsitory {
+export class StubEnrollmentRepository extends EnrollmentRepository {
   private existEnrollment = [
     {
       id: 1,
@@ -30,19 +29,15 @@ export class StubEnrollmentRepository extends EnrollmentReopsitory {
     return [];
   };
 
-  create = async (
-    studentId: number,
-    lectureId: number,
-    connection: any
-  ) => {
+  create = async (studentId: number, lectureId: number, connection: any) => {
     if (lectureId === 3) throw new Error("DB에러 검증을 위한 임의적 에러 발생");
 
     const result = {
       id: this.id,
       studentId,
-      lectureId
-    }
-    this.id ++
+      lectureId,
+    };
+    this.id++;
 
     return result;
   };

@@ -15,7 +15,7 @@
 
 1. Router: 경로별 필요한 controller로 라우팅
 2. Controller: request 정보 가운데 Service에서 필요한 정보를 추출하여 Service 호출
-3. Service: 직접적인 로직이 구현되는 단계 Conrroller로부터 받은 req 정보를 전달받아 repository에 필요한 형태로 데이터를 가공하여 전달 및 repository에서 전달받은 결과 값을 클라이언트에 전달하기 위해 데이터 가공. 가능한 요청인지(ex. 실제 존재하는 강의를 수강하려고 하는지 확인) 확인하는 기능 수행.
+3. Service: 직접적인 로직이 구현되는 단계 Controller로부터 받은 req 정보를 전달받아 repository에 필요한 형태로 데이터를 가공하여 전달 및 repository에서 전달받은 결과 값을 클라이언트에 전달하기 위해 데이터 가공. 가능한 요청인지(ex. 실제 존재하는 강의를 수강하려고 하는지 확인) 확인하는 기능 수행.
 4. Repository: Service에서 전달받은 sql 쿼리를 수행하고 결과 값 전달.
 
 ### 2. 의존성 주입
@@ -105,7 +105,7 @@
 
 ```json
 {
-  "result": "Sucess create lecture"
+  "result": "Success create lecture"
 }
 ```
 
@@ -126,17 +126,17 @@
 
 ```json
 {
-  "result": "Sucess update lecture"
+  "result": "Success update lecture"
 }
 ```
 
 `DELETE` /lecture:id
 
-- Reponse `204`
+- Response `204`
 
 ```json
 {
-  "result": "Sucess delete lecture"
+  "result": "Success delete lecture"
 }
 ```
 
@@ -157,17 +157,17 @@
 
 ```json
 {
-  "result": "Sucess create student"
+  "result": "Success create student"
 }
 ```
 
 `DELETE` /student:id
 
-- Reponse `204`
+- Response `204`
 
 ```json
 {
-  "result": "Sucess delete student"
+  "result": "Success delete student"
 }
 ```
 
@@ -188,7 +188,7 @@
 
 ```json
 {
-  "result": "Sucess create ${result number} of enrollment"
+  "result": "Success create ${result number} of enrollment"
 }
 ```
 
@@ -207,6 +207,8 @@
 #### 느낀점
 
 - 꼭 필요한 동작의 검증을 위해 단위 테스트를 진행하고, 단순히 요청을 전달하고 응답을 받는 동작은 통합 테스트를 하는 것이 좋을 것 같습니다.
+- stub 객체는 stub의 목적으로만 사용되면 괜찮다는 생각으로 구현하였습니다. 과연 stub 객체는 테스트 만을 위한 객체라고 생각했는데, 막상 구현하고 보니 유지 보수가 어려울 수 있겠다는 생각이 들었습니다. stub 객체를 구현 할 때도 추후 유지 보수를 위해 깔끔하게 작성해야 할 것 같다는 생각이 들었습니다.
+- stubRepository 객체를 생성함에 있어서 여러 조건의 params를 받아서 그게 맞는 조건들이 잘 들어갔는지 확인하기 위해 stub에서도 각 params 별로 다른 return을 해주어야 할지 단순히 Service만 테스트하기 위해 params 별로 같은 응답을 해주어도 되는지 고민이 되었습니다. 제 경우 Service에서 조건을 필요에 맞게 가공하는 작업을 하기에 가공이 잘 되었는지 테스트하기 위해 각 params 별로 다른 return을 해주었는데, 이렇게 return을 여러 가지 분기로 처리하다 보니 stubRepository 코드의 가독성이 떨어지는 것을 경험할 수 있었습니다.
 
 ---
 

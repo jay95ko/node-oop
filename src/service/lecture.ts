@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
-import ConflictError from "../modules/errors/conflit.error";
+import ConflictError from "../modules/errors/conflict.error";
 import {
   ILecture,
   ILectureColDetail,
@@ -16,18 +16,18 @@ import {
 import Date from "../util/date.util";
 import db from "../database/db";
 import DBError from "../modules/errors/db.error";
-import { LectureReopsitory } from "../database/repository/lecture";
-import { CategoryReopsitory } from "../database/repository/category";
-import { TeacherReopsitory } from "../database/repository/teacher";
-import { EnrollmentReopsitory } from "../database/repository/elrollment";
+import { LectureRepository } from "../database/repository/lecture";
+import { CategoryRepository } from "../database/repository/category";
+import { TeacherRepository } from "../database/repository/teacher";
+import { EnrollmentRepository } from "../database/repository/enrollment";
 
 @Service()
 export class LectureService {
   constructor(
-    private lectureRepository: LectureReopsitory,
-    private categoryRepository: CategoryReopsitory,
-    private teacherRepository: TeacherReopsitory,
-    private enrollmentRepository: EnrollmentReopsitory,
+    private lectureRepository: LectureRepository,
+    private categoryRepository: CategoryRepository,
+    private teacherRepository: TeacherRepository,
+    private enrollmentRepository: EnrollmentRepository,
     private date: Date
   ) {}
 
@@ -68,7 +68,7 @@ export class LectureService {
       }
 
       await connection.commit();
-      return `Sucess create ${result.length} of lecture`;
+      return `Success create ${result.length} of lecture`;
     } catch (err) {
       console.error(err);
       await connection.rollback();
@@ -94,13 +94,13 @@ export class LectureService {
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist lecture for update");
     }
-    return "Sucess update lecture";
+    return "Success update lecture";
   };
 
   deleteLecture = async (id: number): Promise<string> => {
     //강의를 수강하는 수강생이 있는경우 강의 삭제 불가
     //삭제하려는 강의를 수가하는 학생이 있는지 확인
-    await this.checkEnrollmentedExist(id);
+    await this.checkExistEnrollment(id);
 
     const connection = await db.getConnection();
     const affectedRows = await this.lectureRepository.delete(id, connection);
@@ -111,7 +111,7 @@ export class LectureService {
       throw new DoesNotExistError("Does not exist lecture by id for delete");
     }
 
-    return "Sucess delete lecture";
+    return "Success delete lecture";
   };
 
   private MakeQuery = (query: ILectureQuery): ILectureSqlParams => {
@@ -166,9 +166,9 @@ export class LectureService {
     lecture: Array<ILectureDetail>
   ): IManufactureLectureDetail => {
     const students: Array<ILectureDetailStudent> = [];
-    const lectureDetail = lecture.map((lecturecols: ILectureColDetail) => {
+    const lectureDetail = lecture.map((lecturecolms: ILectureColDetail) => {
       const { student_id, student_name, enrollmentAt, ...lectureInfo } =
-        lecturecols;
+        lecturecolms;
       if (student_id) {
         students.push({
           id: student_id,
@@ -208,7 +208,7 @@ export class LectureService {
     }
   };
 
-  private checkEnrollmentedExist = async (id: number): Promise<void> => {
+  private checkExistEnrollment = async (id: number): Promise<void> => {
     //수강 테이블에 강의 id로 조회 값이 있는 경우 수강생이 있는 경우로 삭제 불가 ConflictError 반환
     const enrollments = await this.enrollmentRepository.findById({
       lectureId: id,
@@ -216,7 +216,7 @@ export class LectureService {
 
     if (enrollments.length > 0) {
       throw new ConflictError(
-        "Can not delete lecture becuse exist enrollment student"
+        "Can not delete lecture because exist enrollment student"
       );
     }
   };

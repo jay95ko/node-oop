@@ -1,11 +1,11 @@
 import { Service } from "typedi";
 import { IStudent } from "../../modules/interface/student.interface";
 import Date from "../../util/date.util";
-import { getAndColumnForQuery, getOrColumnForQuery } from "../../util/db.util";
+import { getAndColumnForQuery } from "../../util/db.util";
 import db from "../db";
 
 @Service()
-export class StudentReopsitory {
+export class StudentRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "student";
   }

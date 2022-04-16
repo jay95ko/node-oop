@@ -20,9 +20,9 @@ export class LectureController {
   getOne = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res
-      .status(200)
-      .send({ result: await this.lectureService.getLecture(+params.id) });
+    res.status(200).send({
+      result: await this.lectureService.getLecture(parseInt(params.id)),
+    });
   };
 
   //강의 생성
@@ -39,7 +39,10 @@ export class LectureController {
     const { params, body } = req;
 
     res.status(200).send({
-      result: await this.lectureService.updateLecture(+params.id, body),
+      result: await this.lectureService.updateLecture(
+        parseInt(params.id),
+        body
+      ),
     });
   };
 
@@ -49,6 +52,8 @@ export class LectureController {
 
     res
       .status(204)
-      .send({ result: await this.lectureService.deleteLecture(+params.id) });
+      .send({
+        result: await this.lectureService.deleteLecture(parseInt(params.id)),
+      });
   };
 }

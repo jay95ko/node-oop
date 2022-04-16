@@ -1,13 +1,13 @@
 import { Service } from "typedi";
 import db from "../database/db";
-import { StudentReopsitory } from "../database/repository/student";
+import { StudentRepository } from "../database/repository/student";
 import AlreadyExistError from "../modules/errors/alreadyExist.error";
 import DoesNotExistError from "../modules/errors/alreadyExist.error copy";
 import { IStudent } from "../modules/interface/student.interface";
 
 @Service()
 export class StudentService {
-  constructor(private studentRepository: StudentReopsitory) {}
+  constructor(private studentRepository: StudentRepository) {}
 
   //수강생 생성
   createStudent = async (student: IStudent): Promise<string> => {
@@ -17,7 +17,7 @@ export class StudentService {
     const connection = await db.getConnection();
     await this.studentRepository.create(student, connection);
     db.releaseConnection(connection);
-    return "Sucess create student";
+    return "Success create student";
   };
 
   //수강생 정보 삭제
@@ -30,7 +30,7 @@ export class StudentService {
     if (affectedRows === 0) {
       throw new DoesNotExistError("Does not exist student by id for delete");
     }
-    return "Sucess delete student";
+    return "Success delete student";
   };
 
   private checkUniqueStudentByEmail = async (email: string): Promise<void> => {

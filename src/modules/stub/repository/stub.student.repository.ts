@@ -1,8 +1,8 @@
-import { StudentReopsitory } from "../../../database/repository/student";
+import { StudentRepository } from "../../../database/repository/student";
 import Date from "../../../util/date.util";
 import { IStudent } from "../../interface/student.interface";
 
-export class StubStudentRepository extends StudentReopsitory {
+export class StubStudentRepository extends StudentRepository {
   private existStudent = {
     id: 1,
     name: "test name",

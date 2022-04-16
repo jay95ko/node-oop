@@ -1,10 +1,9 @@
-import { object } from "joi";
 import { Service } from "typedi";
 import Date from "../../util/date.util";
 import db from "../db";
 
 @Service()
-export class EnrollmentReopsitory {
+export class EnrollmentRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "enrollment";
   }
@@ -18,11 +17,7 @@ export class EnrollmentReopsitory {
     return (await db.pool.query(sql))[0];
   };
 
-  create = async (
-    studentId: number,
-    lectureId: number,
-    connection: any
-  ) => {
+  create = async (studentId: number, lectureId: number, connection: any) => {
     const nowDate = this.date.getTime();
     const sql = `INSERT INTO ${this.tableName} (studentId, lectureId, createdAt) VALUES (?,?,?)`;
 

@@ -15,7 +15,7 @@ describe("StudentService", () => {
   });
 
   describe("수강생 회원가입 서비스", () => {
-    it('유일한 email로 회원가입시 "Sucess creste student" 반환', async () => {
+    it('유일한 email로 회원가입시 "Success create student" 반환', async () => {
       const student = {
         email: "inflab@inflab.com",
         name: "inflab",
@@ -23,10 +23,10 @@ describe("StudentService", () => {
 
       const result = await studentService.createStudent(student);
 
-      expect(result).toEqual("Sucess create student");
+      expect(result).toEqual("Success create student");
     });
 
-    it("중복된 email로 회원가입시 AllreadyExistError 발생", async () => {
+    it("중복된 email로 회원가입시 AlreadyExistError 발생", async () => {
       const student = {
         email: "test@naver.com",
         name: "inflab",
@@ -41,12 +41,12 @@ describe("StudentService", () => {
   });
 
   describe("수강생 탈퇴 서비스", () => {
-    it('존재하는 id로 탈퇴시 "Sucess delete student"반환', async () => {
+    it('존재하는 id로 탈퇴시 "Success delete student"반환', async () => {
       const studentId = 1;
 
       const result = await studentService.deleteStudent(studentId);
 
-      expect(result).toEqual("Sucess delete student");
+      expect(result).toEqual("Success delete student");
     });
 
     it("존재하지 않는 id로 탈퇴시 DoesNotExistError 발생", async () => {

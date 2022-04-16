@@ -1,5 +1,4 @@
 import { Service } from "typedi";
-import DBError from "../../modules/errors/db.error";
 import {
   ILecture,
   ILectureAddCount,
@@ -13,7 +12,7 @@ import {
 import db from "../db";
 
 @Service()
-export class LectureReopsitory {
+export class LectureRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "lecture";
   }
@@ -89,14 +88,14 @@ export class LectureReopsitory {
         ${nowDate},
       ]`);
     return await connection.query(sql, [
-        lecture.title,
-        lecture.description,
-        lecture.price,
-        lecture.teacherId,
-        lecture.categoryId,
-        nowDate,
-        nowDate,
-      ]);
+      lecture.title,
+      lecture.description,
+      lecture.price,
+      lecture.teacherId,
+      lecture.categoryId,
+      nowDate,
+      nowDate,
+    ]);
   };
 
   findOne = async (id: number) => {

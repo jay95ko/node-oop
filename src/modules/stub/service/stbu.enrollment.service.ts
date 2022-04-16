@@ -1,18 +1,17 @@
-import { EnrollmentReopsitory } from "../../../database/repository/elrollment";
-import { LectureReopsitory } from "../../../database/repository/lecture";
-import { StudentReopsitory } from "../../../database/repository/student";
+import { EnrollmentRepository } from "../../../database/repository/enrollment";
+import { LectureRepository } from "../../../database/repository/lecture";
+import { StudentRepository } from "../../../database/repository/student";
 import { EnrollmentService } from "../../../service/enrollment";
-import Date from "../../../util/date.util";
 
 export class StubEnrollmentService extends EnrollmentService {
   constructor(
-    enrollmentRepository: EnrollmentReopsitory,
-    lectureRepository: LectureReopsitory,
-    studentRepository: StudentReopsitory
+    enrollmentRepository: EnrollmentRepository,
+    lectureRepository: LectureRepository,
+    studentRepository: StudentRepository
   ) {
     super(enrollmentRepository, lectureRepository, studentRepository);
   }
   createEnrollment = async () => {
-    return "Sucess create 1 of enrollment";
+    return "Success create 1 of enrollment";
   };
 }

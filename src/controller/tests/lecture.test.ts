@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import httpMocks from "node-mocks-http";
 import Container from "typedi";
-import { CategoryReopsitory } from "../../database/repository/category";
-import { EnrollmentReopsitory } from "../../database/repository/elrollment";
-import { LectureReopsitory } from "../../database/repository/lecture";
-import { TeacherReopsitory } from "../../database/repository/teacher";
+import { CategoryRepository } from "../../database/repository/category";
+import { EnrollmentRepository } from "../../database/repository/enrollment";
+import { LectureRepository } from "../../database/repository/lecture";
+import { TeacherRepository } from "../../database/repository/teacher";
 import Date from "../../util/date.util";
 import { LectureController } from "../lecture";
 import { StubLectureService } from "../../modules/stub/service/stbu.lecture.service";
@@ -12,10 +12,10 @@ import { StubLectureService } from "../../modules/stub/service/stbu.lecture.serv
 describe("LectureController", () => {
   let lectureController: LectureController;
   beforeEach(() => {
-    const lectureRepository = Container.get(LectureReopsitory);
-    const enrollmentRepository = Container.get(EnrollmentReopsitory);
-    const categoryRepository = Container.get(CategoryReopsitory);
-    const teacherRepository = Container.get(TeacherReopsitory);
+    const lectureRepository = Container.get(LectureRepository);
+    const enrollmentRepository = Container.get(EnrollmentRepository);
+    const categoryRepository = Container.get(CategoryRepository);
+    const teacherRepository = Container.get(TeacherRepository);
     const date = Container.get(Date);
     const stubsLectureService = new StubLectureService(
       lectureRepository,
@@ -95,38 +95,38 @@ describe("LectureController", () => {
   });
 
   describe("강의 생성 컨트롤러", () => {
-    it('강의 생성 성공 되었을 때 "Sucess create 1 of lecture" 반환', async () => {
+    it('강의 생성 성공 되었을 때 "Success create 1 of lecture" 반환', async () => {
       const request = httpMocks.createRequest();
       const response = httpMocks.createResponse();
 
       await lectureController.create(request, response);
 
       expect(response.statusCode).toBe(201);
-      expect(response._getData().result).toEqual("Sucess create 1 of lecture");
+      expect(response._getData().result).toEqual("Success create 1 of lecture");
     });
   });
 
   describe("강의 수정 컨트롤러", () => {
-    it('강의 수정 성공 되었을 때 "Sucess update lecture" 반환', async () => {
+    it('강의 수정 성공 되었을 때 "Success update lecture" 반환', async () => {
       const request = httpMocks.createRequest();
       const response = httpMocks.createResponse();
 
       await lectureController.update(request, response);
 
       expect(response.statusCode).toBe(200);
-      expect(response._getData().result).toEqual("Sucess update lecture");
+      expect(response._getData().result).toEqual("Success update lecture");
     });
   });
 
   describe("강의 삭제 컨트롤러", () => {
-    it('강의 삭제 성공 되었을 때 "Sucess delete lecture" 반환', async () => {
+    it('강의 삭제 성공 되었을 때 "Success delete lecture" 반환', async () => {
       const request = httpMocks.createRequest();
       const response = httpMocks.createResponse();
 
       await lectureController.delete(request, response);
 
       expect(response.statusCode).toBe(204);
-      expect(response._getData().result).toEqual("Sucess delete lecture");
+      expect(response._getData().result).toEqual("Success delete lecture");
     });
   });
 });

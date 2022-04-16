@@ -1,15 +1,15 @@
-import { StudentReopsitory } from "../../../database/repository/student";
+import { StudentRepository } from "../../../database/repository/student";
 import { StudentService } from "../../../service/student";
 
 export class StubStudentService extends StudentService {
-  constructor(studentRepository: StudentReopsitory) {
+  constructor(studentRepository: StudentRepository) {
     super(studentRepository);
   }
   createStudent = async () => {
-    return "Sucess create student";
+    return "Success create student";
   };
 
   deleteStudent = async () => {
-    return "Sucess delete student";
+    return "Success delete student";
   };
 }
