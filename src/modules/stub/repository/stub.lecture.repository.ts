@@ -1,8 +1,12 @@
-import { LectureReopsitory } from "../../../database/repository/lecture";
+import { LectureRepository } from "../../../database/repository/lecture";
 import Date from "../../../util/date.util";
-import { ILecture, ILectureAddCount, ILectureUpdate } from "../../interface/lecture.interface";
+import {
+  ILecture,
+  ILectureSqlParams,
+  ILectureUpdate,
+} from "../../interface/lecture.interface";
 
-export class StubLectureRepository extends LectureReopsitory {
+export class StubLectureRepository extends LectureRepository {
   private lectureListByIdResult = [
     {
       id: 1,
@@ -195,7 +199,7 @@ export class StubLectureRepository extends LectureReopsitory {
     },
   ];
 
-  private lectureListFiltertitleResult = [
+  private lectureListFilterTitleResult = [
     {
       id: 838,
       title: "테스트10",
@@ -225,7 +229,7 @@ export class StubLectureRepository extends LectureReopsitory {
     super(date, tableName);
   }
 
-  find = async (params: any) => {
+  find = async (params: ILectureSqlParams) => {
     if (params.order === "lecture.studentNum") {
       return this.lectureListResultStudentNumOrder;
     } else if (!params.where) {
@@ -236,7 +240,7 @@ export class StubLectureRepository extends LectureReopsitory {
     ) {
       return this.lectureListFilterCategoryIdResult;
     } else if (params.where[0]?.title === "테스트10") {
-      return this.lectureListFiltertitleResult;
+      return this.lectureListFilterTitleResult;
     } else if (params.where[0]?.categoryId === 2) {
       return this.lectureListFilterCategoryIdResult;
     } else if (params.where[0]?.teacherName === "고준영") {
@@ -252,8 +256,9 @@ export class StubLectureRepository extends LectureReopsitory {
     );
   };
 
-  create = async (lecture: ILecture, connection: any) => {
-    if (lecture.title === "1") throw new Error("DB에러 검증을 위한 에러");
+  create = async (lecture: ILecture) => {
+    console.log(lecture);
+    if (lecture.title == "1") throw new Error("DB에러 검증을 위한 에러");
     return this.createLectureResult;
   };
 
@@ -262,16 +267,16 @@ export class StubLectureRepository extends LectureReopsitory {
     return [];
   };
 
-  update = async (id: number, lecture: ILectureUpdate | ILectureAddCount, connection: any) => {
+  update = async ({ id }: ILectureUpdate) => {
     if (id === 4) return 0; // 수강신청시 강의에 수강생 수 추가중 에러발생 로직 검사를 위해 발생
     let result = 0;
-    this.lectureListByIdResult.forEach((lecture) => {
-      if (lecture.id === id) result = 1;
+    this.lectureListByIdResult.forEach((existLecture) => {
+      if (existLecture.id === id) result = 1;
     });
     return result;
   };
 
-  delete = async (id: number, connection: any) => {
+  delete = async (id: number) => {
     let result = 0;
     this.lectureListByIdResult.forEach((lecture) => {
       if (lecture.id === id) result = 1;

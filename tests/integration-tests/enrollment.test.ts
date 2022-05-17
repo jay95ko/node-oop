@@ -33,7 +33,7 @@ describe("/enrollment", () => {
 
       expect(res.status).toBe(201);
       expect(res.body).toEqual({
-        result: "Sucess create 2 of enrollment",
+        result: "Success create 2 of enrollment",
       });
     });
 

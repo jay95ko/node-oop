@@ -1,7 +1,7 @@
-import { CategoryReopsitory } from "../../../database/repository/category";
-import { EnrollmentReopsitory } from "../../../database/repository/elrollment";
-import { LectureReopsitory } from "../../../database/repository/lecture";
-import { TeacherReopsitory } from "../../../database/repository/teacher";
+import { CategoryRepository } from "../../../database/repository/category";
+import { EnrollmentRepository } from "../../../database/repository/enrollment";
+import { LectureRepository } from "../../../database/repository/lecture";
+import { TeacherRepository } from "../../../database/repository/teacher";
 import { LectureService } from "../../../service/lecture";
 import Date from "../../../util/date.util";
 import {
@@ -11,10 +11,10 @@ import {
 
 export class StubLectureService extends LectureService {
   constructor(
-    lectureRepository: LectureReopsitory,
-    categoryRepository: CategoryReopsitory,
-    teacherRepository: TeacherReopsitory,
-    enrollmentRepository: EnrollmentReopsitory,
+    lectureRepository: LectureRepository,
+    categoryRepository: CategoryRepository,
+    teacherRepository: TeacherRepository,
+    enrollmentRepository: EnrollmentRepository,
     date: Date
   ) {
     super(
@@ -78,14 +78,14 @@ export class StubLectureService extends LectureService {
   };
 
   createLecture = async (): Promise<string> => {
-    return "Sucess create 1 of lecture";
+    return "Success create 1 of lecture";
   };
 
   updateLecture = async (): Promise<string> => {
-    return "Sucess update lecture";
+    return "Success update lecture";
   };
 
   deleteLecture = async (): Promise<string> => {
-    return "Sucess delete lecture";
+    return "Success delete lecture";
   };
 }

@@ -22,7 +22,7 @@ describe("/student", () => {
 
       expect(res.status).toBe(201);
       expect(res.body).toEqual({
-        result: "Sucess create student",
+        result: "Success create student",
       });
     });
 

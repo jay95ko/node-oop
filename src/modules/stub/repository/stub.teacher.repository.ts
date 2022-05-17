@@ -1,6 +1,6 @@
-import { TeacherReopsitory } from "../../../database/repository/teacher";
+import { TeacherRepository } from "../../../database/repository/teacher";
 
-export class StubTeacherRepository extends TeacherReopsitory {
+export class StubTeacherRepository extends TeacherRepository {
   private existTeacher = [
     {
       id: 1,
@@ -20,7 +20,7 @@ export class StubTeacherRepository extends TeacherReopsitory {
   }
 
   findByIds = async (params: Array<number>) => {
-    let result: any = [];
+    let result: Array<{ id: number; name: string }> = [];
     this.existTeacher.forEach((teacher) => {
       if (params.includes(teacher.id) && !result.includes(teacher)) {
         result.push(teacher);

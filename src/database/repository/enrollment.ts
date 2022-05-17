@@ -1,15 +1,18 @@
-import { object } from "joi";
 import { Service } from "typedi";
+import {
+  IEnrollmentCreate,
+  IEnrollmentFindById,
+} from "../../modules/interface/enrollment.interface";
 import Date from "../../util/date.util";
 import db from "../db";
 
 @Service()
-export class EnrollmentReopsitory {
+export class EnrollmentRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "enrollment";
   }
 
-  findById = async (params: object) => {
+  findById = async (params: IEnrollmentFindById) => {
     const key = Object.keys(params)[0];
     const value = Object.values(params)[0];
 
@@ -19,8 +22,7 @@ export class EnrollmentReopsitory {
   };
 
   create = async (
-    studentId: number,
-    lectureId: number,
+    { studentId, lectureId }: IEnrollmentCreate,
     connection: any
   ) => {
     const nowDate = this.date.getTime();

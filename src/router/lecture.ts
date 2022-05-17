@@ -17,7 +17,7 @@ export class LectureRouter {
 
   private init() {
     // GET /lecture
-    // Query params: page, order, category, title, teachername, student
+    // Query params: page, order, category, title, teacherName, student
     LectureRouter.router.get(
       "/",
       asyncWrapper(validateGetLectureList),

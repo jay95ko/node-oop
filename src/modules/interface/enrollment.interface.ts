@@ -8,3 +8,13 @@ export type IEnrollmentInfo = {
   studentId: number;
   lectureId: number;
 };
+
+export type IEnrollmentFindById = {
+  studentId?: number;
+  lectureId?: number;
+};
+
+export type IEnrollmentCreate = {
+  studentId: number;
+  lectureId: number;
+};

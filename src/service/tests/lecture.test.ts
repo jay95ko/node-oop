@@ -10,7 +10,7 @@ import {
 } from "../../modules/interface/lecture.interface";
 import DoesNotExistError from "../../modules/errors/alreadyExist.error copy";
 import DBError from "../../modules/errors/db.error";
-import ConflictError from "../../modules/errors/conflit.error";
+import ConflictError from "../../modules/errors/conflict.error";
 import { StubLectureRepository } from "../../modules/stub/repository/stub.lecture.repository";
 import { StubEnrollmentRepository } from "../../modules/stub/repository/stub.enrollment.repository";
 
@@ -332,7 +332,7 @@ describe("LectureService", () => {
       }).rejects.toThrowError(new DBError("Lecture create error"));
     });
 
-    it('존재하는 카테고리와 강사의 정보로 강의 생성시 생성 "Sucess create ${강의 수} of lecture" 반환 ', async () => {
+    it('존재하는 카테고리와 강사의 정보로 강의 생성시 생성 "Success create ${강의 수} of lecture" 반환 ', async () => {
       const lecture: Array<ILecture> = [
         {
           title: "노드",
@@ -352,39 +352,43 @@ describe("LectureService", () => {
 
       const result = await lectureService.createLecture(lecture);
 
-      expect(result).toEqual("Sucess create 2 of lecture");
+      expect(result).toEqual("Success create 2 of lecture");
     });
   });
 
   describe("강의 수정", () => {
     it("존재하지 않는 강의를 수정했을 경우 DoesNotExistError 발생", async () => {
       const lecture: ILectureUpdate = {
-        title: "테스트 강좌명",
-        description: "테스트 강좌 설명입니다.",
-        price: 10000,
-        expose: 1,
+        id: 5,
+        lecture: {
+          title: "테스트 강좌명",
+          description: "테스트 강좌 설명입니다.",
+          price: 10000,
+          expose: 1,
+        },
       };
-      const id = 5;
 
       await expect(async () => {
-        await lectureService.updateLecture(id, lecture);
+        await lectureService.updateLecture(lecture);
       }).rejects.toThrowError(
         new DoesNotExistError("Does not exist lecture for update")
       );
     });
 
-    it("강의 수정이 정상적으로 완료되었을 경우 Sucess update lecture 반환", async () => {
+    it("강의 수정이 정상적으로 완료되었을 경우 Success update lecture 반환", async () => {
       const lecture: ILectureUpdate = {
-        title: "테스트 강좌명",
-        description: "테스트 강좌 설명입니다.",
-        price: 10000,
-        expose: 1,
+        id: 1,
+        lecture: {
+          title: "테스트 강좌명",
+          description: "테스트 강좌 설명입니다.",
+          price: 10000,
+          expose: 1,
+        },
       };
-      const id = 1;
 
-      const result = await lectureService.updateLecture(id, lecture);
+      const result = await lectureService.updateLecture(lecture);
 
-      expect(result).toEqual("Sucess update lecture");
+      expect(result).toEqual("Success update lecture");
     });
   });
 
@@ -396,7 +400,7 @@ describe("LectureService", () => {
         await lectureService.deleteLecture(id);
       }).rejects.toThrowError(
         new ConflictError(
-          "Can not delete lecture becuse exist enrollment student"
+          "Can not delete lecture because exist enrollment student"
         )
       );
     });
@@ -411,12 +415,12 @@ describe("LectureService", () => {
       );
     });
 
-    it("강의 삭제가 정상적으로 완료되었을 경우 Sucess delete lecture 반환", async () => {
+    it("강의 삭제가 정상적으로 완료되었을 경우 Success delete lecture 반환", async () => {
       const id = 2;
 
       const result = await lectureService.deleteLecture(id);
 
-      expect(result).toEqual("Sucess delete lecture");
+      expect(result).toEqual("Success delete lecture");
     });
   });
 });

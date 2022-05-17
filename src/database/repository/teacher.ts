@@ -3,7 +3,7 @@ import { getOrColumnForQuery } from "../../util/db.util";
 import db from "../db";
 
 @Service()
-export class TeacherReopsitory {
+export class TeacherRepository {
   constructor(private tableName: string) {
     this.tableName = "teacher";
   }

@@ -1,6 +1,6 @@
-import { CategoryReopsitory } from "../../../database/repository/category";
+import { CategoryRepository } from "../../../database/repository/category";
 
-export class StubCategoryRepository extends CategoryReopsitory {
+export class StubCategoryRepository extends CategoryRepository {
   private existCategory = [
     {
       id: 1,
@@ -16,7 +16,7 @@ export class StubCategoryRepository extends CategoryReopsitory {
   }
 
   findByIds = async (params: Array<number>) => {
-    let result: any = [];
+    let result: Array<{ id: number; category: string }> = [];
     this.existCategory.forEach((category) => {
       if (params.includes(category.id) && !result.includes(category)) {
         result.push(category);

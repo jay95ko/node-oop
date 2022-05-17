@@ -1,11 +1,14 @@
 import { Service } from "typedi";
-import { IStudent } from "../../modules/interface/student.interface";
+import {
+  IStudent,
+  IStudentFindOne,
+} from "../../modules/interface/student.interface";
 import Date from "../../util/date.util";
-import { getAndColumnForQuery, getOrColumnForQuery } from "../../util/db.util";
+import { getAndColumnForQuery } from "../../util/db.util";
 import db from "../db";
 
 @Service()
-export class StudentReopsitory {
+export class StudentRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "student";
   }
@@ -14,10 +17,11 @@ export class StudentReopsitory {
     const sql = `INSERT INTO ${this.tableName} (email, name) VALUES (?,?)`;
     console.log(`Query : ${sql} [${email}, ${name}]`);
 
-    return await connection.query(sql, [email, name]);
+    const result = (await connection.query(sql, [email, name]))[0];
+    return result ? result.affectedRows : 0;
   };
 
-  findOne = async (params: object) => {
+  findOne = async (params: IStudentFindOne) => {
     const conditions = getAndColumnForQuery(params);
     const sql = `SELECT * FROM ${this.tableName} WHERE ${conditions} AND deletedAt IS NULL`;
     console.log(`Query : ${sql}`);

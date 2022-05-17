@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Service } from "typedi";
-import { ILectureQuery } from "../modules/interface/lecture.interface";
 import { LectureService } from "../service/lecture";
 
 @Service()
@@ -20,9 +19,9 @@ export class LectureController {
   getOne = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res
-      .status(200)
-      .send({ result: await this.lectureService.getLecture(+params.id) });
+    res.status(200).send({
+      result: await this.lectureService.getLecture(parseInt(params.id)),
+    });
   };
 
   //강의 생성
@@ -37,9 +36,10 @@ export class LectureController {
   //강의 수정
   update = async (req: Request, res: Response) => {
     const { params, body } = req;
+    const id = parseInt(params.id);
 
     res.status(200).send({
-      result: await this.lectureService.updateLecture(+params.id, body),
+      result: await this.lectureService.updateLecture({ id, lecture: body }),
     });
   };
 
@@ -47,8 +47,8 @@ export class LectureController {
   delete = async (req: Request, res: Response) => {
     const { params } = req;
 
-    res
-      .status(204)
-      .send({ result: await this.lectureService.deleteLecture(+params.id) });
+    res.status(204).send({
+      result: await this.lectureService.deleteLecture(parseInt(params.id)),
+    });
   };
 }

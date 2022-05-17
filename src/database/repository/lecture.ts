@@ -1,8 +1,9 @@
 import { Service } from "typedi";
-import DBError from "../../modules/errors/db.error";
 import {
   ILecture,
-  ILectureAddCount,
+  ILectureSqlIncludeParams,
+  ILectureSqlParams,
+  ILectureSqlWhereParams,
   ILectureUpdate,
 } from "../../modules/interface/lecture.interface";
 import Date from "../../util/date.util";
@@ -13,26 +14,24 @@ import {
 import db from "../db";
 
 @Service()
-export class LectureReopsitory {
+export class LectureRepository {
   constructor(private date: Date, private tableName: string) {
     this.tableName = "lecture";
   }
 
-  find = async (params: any) => {
+  find = async (params: ILectureSqlParams) => {
     let JOIN = "";
-    params.include.forEach(
-      (include: { model: string; require: boolean; on: string }) => {
-        if (include.require) {
-          JOIN = JOIN.concat(`INNER JOIN ${include.model} ON ${include.on} `);
-        } else {
-          JOIN = JOIN.concat(`LEFT JOIN ${include.model} ON ${include.on} `);
-        }
+    params.include.forEach((include: ILectureSqlIncludeParams) => {
+      if (include.require) {
+        JOIN = JOIN.concat(`INNER JOIN ${include.model} ON ${include.on} `);
+      } else {
+        JOIN = JOIN.concat(`LEFT JOIN ${include.model} ON ${include.on} `);
       }
-    );
+    });
 
     let WHERE = "expose = 1 AND lecture.deletedAt IS NULL";
     let WHERE_CATEGORY = "";
-    params.where?.forEach((where: Array<Object | null>) => {
+    params.where?.forEach((where: ILectureSqlWhereParams) => {
       if (Object.keys(where)[0] === "categoryId") {
         WHERE_CATEGORY = `AND lecture.categoryId = ${Object.values(where)[0]}`;
       } else {
@@ -89,14 +88,14 @@ export class LectureReopsitory {
         ${nowDate},
       ]`);
     return await connection.query(sql, [
-        lecture.title,
-        lecture.description,
-        lecture.price,
-        lecture.teacherId,
-        lecture.categoryId,
-        nowDate,
-        nowDate,
-      ]);
+      lecture.title,
+      lecture.description,
+      lecture.price,
+      lecture.teacherId,
+      lecture.categoryId,
+      nowDate,
+      nowDate,
+    ]);
   };
 
   findOne = async (id: number) => {
@@ -112,15 +111,11 @@ export class LectureReopsitory {
     return (await db.pool.query(sql))[0];
   };
 
-  update = async (
-    id: number,
-    lecture: ILectureUpdate | ILectureAddCount,
-    connection: any
-  ) => {
-    const contitions = getOrColumnForUpdateQuery(lecture);
+  update = async ({ id, lecture }: ILectureUpdate, connection: any) => {
+    const conditions = getOrColumnForUpdateQuery(lecture);
     const sql = `UPDATE ${
       this.tableName
-    } SET ${contitions}, updatedAt = '${this.date.getTime()}' WHERE id = ${id}`;
+    } SET ${conditions}, updatedAt = '${this.date.getTime()}' WHERE id = ${id}`;
     console.log(`Query : ${sql}`);
     const result = (await connection.query(sql))[0];
 
